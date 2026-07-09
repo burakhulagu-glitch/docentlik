@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Doçentlik Puan Hesaplayıcı — Kolay Seçimli</title>
+<title>Doçentlik Puan Hesaplayıcı</title>
 <style>
  :root{
   --bg:#f4f7fa;--surface:#ffffff;--surface2:#f8fafc;--card:#ffffff;--ink:#111827;--muted:#4b5563;
@@ -45,6 +45,11 @@ button{cursor:pointer}
 @keyframes alertGlowGreen{0%,100%{box-shadow:0 10px 24px rgba(22,163,74,.09),0 0 0 rgba(22,163,74,0)}50%{box-shadow:0 10px 24px rgba(22,163,74,.14),0 0 24px rgba(22,163,74,.28)}}
 .detail-grid{display:grid;grid-template-columns:repeat(4,minmax(110px,1fr));gap:9px;margin-top:10px}.detail-chip{border:2px solid var(--line-strong);background:var(--surface);border-radius:14px;padding:10px 11px}.detail-chip small{display:block;color:var(--muted);font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}.detail-chip b{display:block;color:var(--ink);font-size:13px}.calc-panel{margin-top:10px;border:2px solid color-mix(in srgb,var(--primary) 25%, var(--line));background:color-mix(in srgb,var(--primary) 6%, var(--surface));border-radius:14px;padding:10px 12px}.calc-panel small{display:block;color:var(--muted);font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}.calc-panel b{display:block;color:var(--ink);font-size:13px;line-height:1.35}.work-note{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:5px;max-width:360px}.note-cell{max-width:320px;white-space:normal;line-height:1.35}
 @media(max-width:900px){.detail-grid{grid-template-columns:1fr 1fr}}
+
+.notice-card{border:2px solid #fdba74;background:#fff7ed;color:#7c2d12;border-radius:18px;padding:13px 16px;margin:0 0 14px;font-weight:900;display:flex;align-items:center;gap:10px;box-shadow:0 10px 24px rgba(217,119,6,.10)}
+.start-panel{display:flex;align-items:center;justify-content:space-between;gap:14px;border:2px solid var(--line-strong);background:linear-gradient(135deg,color-mix(in srgb,var(--primary) 9%, var(--surface)),var(--surface));border-radius:18px;padding:15px 17px;margin:0 0 18px}.start-panel strong{display:block;color:var(--ink);font-size:16px}.start-panel span{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+.work-head{cursor:pointer}.collapse-btn{border:2px solid var(--line-strong);background:var(--surface);border-radius:12px;padding:7px 10px;font-size:12px;font-weight:950;color:var(--ink)}.work-note-editor{padding:12px 16px;background:var(--surface);border-bottom:2px solid var(--line);}.work-note-editor label{display:block;font-size:12px;color:var(--muted);font-weight:950;margin-bottom:6px}.work-note-editor textarea{width:100%;border:2px solid var(--line-strong);border-radius:13px;min-height:58px;resize:vertical;padding:10px 12px;line-height:1.45;background:var(--field);color:var(--fieldText);outline:none}.work-note-editor textarea:focus{border-color:var(--primary2);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 14%, transparent)}.rule-hint{margin-top:8px;border:2px solid color-mix(in srgb,var(--primary) 20%, var(--line));background:color-mix(in srgb,var(--primary) 5%, var(--surface));border-radius:13px;padding:9px 10px;color:var(--muted);font-size:12px;line-height:1.35}.work-card.collapsed .work-body{display:none}.work-card.collapsed .work-head{border-bottom:2px solid var(--line)}
+
 @media(max-width:1220px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.nav{grid-template-columns:repeat(3,1fr)}.kpis{grid-template-columns:repeat(3,1fr)}.fixed-name{display:block;text-align:left;background:var(--surface2);color:var(--ink);border:2px solid var(--line-strong);box-shadow:none;border-radius:14px;padding:10px 12px;font-weight:950;font-size:13px;letter-spacing:.03em;margin-top:auto}.addbar .btn{margin-left:0}}
 @media(max-width:820px){.sidebar{padding-bottom:18px}.main{padding:14px}.split{grid-template-columns:1fr}.top-alerts{grid-template-columns:1fr}.limits-grid{grid-template-columns:1fr}.list-total{grid-template-columns:1fr}.formrow{grid-template-columns:1fr}.c3,.c4,.c6,.c12{grid-column:auto}.kpis{grid-template-columns:1fr 1fr}.nav{grid-template-columns:1fr}.work-head{align-items:flex-start;flex-direction:column}.work-score{text-align:left}.dynamic-box{grid-template-columns:1fr}.fixed-name{display:block;text-align:left;background:var(--surface2);color:var(--ink);border:2px solid var(--line-strong);box-shadow:none;border-radius:14px;padding:10px 12px;font-weight:950;font-size:13px;letter-spacing:.03em;margin-top:auto}}
 @media print{.sidebar,.actions,.themebox,.addbar,.btn,.fixed-name{display:none!important}.app{display:block}.main{padding:0}.panel,.work-card,.kpi{box-shadow:none;border:1.5px solid #b9c1cc}body{background:#fff}.print-only{display:block}}
@@ -66,11 +71,10 @@ button{cursor:pointer}
     </div>
     <nav class="nav">
       <a href="#ozet"><i>01</i>Genel özet</a>
-      <a href="#aday"><i>02</i>Aday bilgisi</a>
-      <a href="#maddeler"><i>03</i>Çalışma maddeleri</a>
+      <a href="#maddeler"><i>02</i>Çalışmalar</a>
+      <a href="#liste"><i>03</i>Liste</a>
       <a href="#sinirlar"><i>04</i>Puan sınırları</a>
-      <a href="#liste"><i>05</i>Liste</a>
-      <a href="#yedek"><i>06</i>Yedek</a>
+      <a href="#yedek"><i>05</i>Veri işlemleri</a>
     </nav>
     <div class="themebox"><b>Renk paleti</b> Tüm arayüz tek bir ana renge göre otomatik uyarlanır.
       <div class="palettepanel">
@@ -84,9 +88,8 @@ button{cursor:pointer}
       </div>
     </div>
     <div id="yedek" class="actions">
-      <button class="btn green" onclick="save()">Kaydet</button>
-      <button class="btn" onclick="exportJson()">Veri yedeği oluştur</button>
-      <button class="btn" onclick="document.getElementById('importFile').click()">Yedek yükle</button>
+      <button class="btn green" onclick="exportJson()">Kaydet / Veriyi indir</button>
+      <button class="btn" onclick="document.getElementById('importFile').click()">Kaydedilen veriyi yükle</button>
       <button class="btn gold" onclick="exportCsv()">Excel indir</button>
       <button class="btn" onclick="window.print()">PDF / Yazdır</button>
       <button class="btn red" onclick="clearAll()">Tümünü temizle</button>
@@ -97,26 +100,17 @@ button{cursor:pointer}
 
   <main class="main">
     <section id="ozet" class="kpis">
-      <div class="kpi" id="k_total100"><b>0</b><span>100 puan hesabı</span></div>
-      <div class="kpi" id="k_post"><b>0</b><span>Dr sonrası / 90</span></div>
-      <div class="kpi" id="k_sci"><b>0</b><span>SCI Q1-Q3 / 40</span></div>
-      <div class="kpi" id="k_tr"><b>0</b><span>TR Dizin / 10</span></div>
-      <div class="kpi" id="k_cite"><b>0</b><span>Atıf / 5</span></div>
-      <div class="kpi" id="k_meet"><b>0</b><span>Bildiri / 5</span></div>
-      <div class="kpi" id="k_thesis"><b>0</b><span>Tez yayını / 1</span></div>
+      <div class="kpi" id="k_total100"><b>0</b><span>En az 100 puan hesabı</span></div>
+      <div class="kpi" id="k_post"><b>0</b><span>En az Dr sonrası / 90</span></div>
+      <div class="kpi" id="k_sci"><b>0</b><span>En az SCI Q1-Q3 / 40</span></div>
+      <div class="kpi" id="k_tr"><b>0</b><span>En az TR Dizin / 10</span></div>
+      <div class="kpi" id="k_cite"><b>0</b><span>En az Atıf / 5</span></div>
+      <div class="kpi" id="k_meet"><b>0</b><span>En az Bildiri / 5</span></div>
+      <div class="kpi" id="k_thesis"><b>0</b><span>En az lisansüstü tez çalışması / 1</span></div>
     </section>
     <section id="topAlerts" class="top-alerts" aria-label="Kalan puan uyarıları"></section>
-
-    <section id="aday" class="section panel">
-      <div class="section-head">
-        <div><h3><span class="bubble">👤</span>Aday Bilgisi</h3><div class="muted">Aday bilgileri özet ve yedek dosyasında düzenli görünür.</div></div>
-      </div>
-      <div class="formrow">
-        <div class="field c4"><label>Ad Soyad</label><input id="candName" placeholder="Burak Hülagü" oninput="updateCandidate()"></div>
-        <div class="field c4"><label>Temel alan</label><select id="candField" onchange="updateCandidate()"><option>Mühendislik</option><option>Fen Bilimleri ve Matematik</option><option>Sağlık Bilimleri</option><option>Sosyal, Beşeri ve İdari Bilimler</option><option>Eğitim Bilimleri</option><option>Diğer</option></select></div>
-        <div class="field c4"><label>Başvuru dönemi</label><select id="candTerm" onchange="updateCandidate()"><option>2026 Mart</option><option>2026 Ekim</option><option>2027 Mart</option><option>2027 Ekim</option><option>Diğer</option></select></div>
-      </div>
-    </section>
+    <section class="notice-card">⚠️ <span>Sayfada hata olabilir, kontrol edin ve hataları bildirin 🙂</span></section>
+    <section class="start-panel"><div><strong>Çalışma eklemeye başla</strong><span>Yeni çalışma ekleme alanına geç.</span></div><button class="btn primary" onclick="scrollToWorks()">Çalışma eklemeye başla</button></section>
 
     <section class="split">
       <div class="panel">
@@ -136,19 +130,19 @@ button{cursor:pointer}
 
     <section id="maddeler" class="section panel">
       <div class="section-head">
-        <div><h3><span class="bubble">＋</span>Çalışma Maddeleri</h3><div class="muted">Her çalışma ayrı bir madde olarak eklenir.</div></div>
+        <div><h3><span class="bubble">＋</span>Çalışmalar</h3><div class="muted">Her çalışma ayrı bir kayıt olarak eklenir.</div></div>
       </div>
       <div class="items" id="items"></div>
       <div class="addbar">
         <button type="button" class="plus" onclick="addItem()" aria-label="Yeni çalışma ekle">+</button>
-        <div><strong>Yeni çalışma ekle</strong><p>Makale, bildiri, atıf, proje, patent ve diğer kalemleri ayrı maddeler halinde ekleyin.</p></div>
+        <div><strong>Yeni çalışma ekle</strong><p>Makale, bildiri, atıf, proje, patent ve diğer kalemleri ayrı çalışmalar halinde ekleyin.</p></div>
         <button class="btn primary" onclick="addItem()">Yeni çalışma ekle</button>
       </div>
     </section>
 
     <section id="liste" class="section panel">
       <div class="section-head"><h3><span class="bubble">▦</span>Toplu Liste</h3><button class="btn" onclick="exportCsv()">Excel indir</button></div>
-      <div class="list-table"><table><thead><tr><th>Madde</th><th>Dönem</th><th>Çalışma türü</th><th>Alt tür</th><th>Açıklama</th><th>Hesap</th><th>Puan</th><th>İşlem</th></tr></thead><tbody id="listBody"></tbody></table></div>
+      <div class="list-table"><table><thead><tr><th>Çalışma</th><th>Dönem</th><th>Çalışma türü</th><th>Alt tür</th><th>Açıklama</th><th>Hesap</th><th>Puan</th><th>İşlem</th></tr></thead><tbody id="listBody"></tbody></table></div>
       <div id="listTotal" class="list-total"></div>
       <div class="list-actions"><button class="btn primary" onclick="scrollToSummary()">Tüm özeti gör</button></div>
     </section>
@@ -156,7 +150,7 @@ button{cursor:pointer}
 </div>
 
 <script>
-const STORAGE_KEY='docentlik_modern_secimli_v6';
+const STORAGE_KEY='docentlik_modern_secimli_v7';
 const DEFAULT_ACCENT='#2563eb';
 const TYPES={
   international_article:{name:'Makale - Uluslararası',icon:'📄',cap:null,defaultShare:'equal',items:[
@@ -166,7 +160,7 @@ const TYPES={
   national_article:{name:'Makale - Ulusal',icon:'📰',cap:null,defaultShare:'equal',items:[
     ['trdizin','TR Dizin makale',10,['trdizin']],['other_nat','Diğer hakemli ulusal dergi',4,['national']],['nat_minor','Editöre mektup / araştırma notu / özet / kritik',2,['minor']]
   ]},
-  thesis_publication:{name:'Tezden Üretilmiş Yayın',icon:'🎓',cap:null,defaultShare:'equal',items:[
+  thesis_publication:{name:'Lisansüstü Tez Çalışması',icon:'🎓',cap:null,defaultShare:'equal',items:[
     ['thesis_sci','SCI/SSCI/AHCI makale',20,['thesis','sci']],['thesis_esci','ESCI / Scopus makale',10,['thesis','esci']],['thesis_int','Diğer uluslararası indeksli makale',5,['thesis']],
     ['thesis_tr','TR Dizin makale',8,['thesis','trdizin']],['thesis_book','BKCI kitap',20,['thesis','book']],['thesis_chapter','BKCI kitap bölümü',10,['thesis','chapter']],['thesis_meeting','Uluslararası tam metin bildiri',5,['thesis','meeting']]
   ]},
@@ -202,34 +196,41 @@ const TYPES={
   ]}
 };
 const SHARE_OPTIONS=[
- ['full','Tam puan'],['equal','Kişi sayısına eşit böl'],['main','Başlıca yazar / yürütücü'],['grad_80','Lisansüstü öğrenci ile yapılan çalışma (%80)'],['ratio_50','%50 oran'],['ratio_33','%33 oran'],['ratio_25','%25 oran'],['ratio_20','%20 oran']
+ ['full','Tam puan / tek yazar'],['equal','Kişi sayısına eşit böl'],['main_sole','Başlıca yazar: tek yazar'],['main_grad','Başlıca yazar: lisansüstü öğrencisi ile'],['grad_80','Lisansüstü öğrenci ile yapılan çalışma (%80)'],['ratio_50','%50 oran'],['ratio_33','%33 oran'],['ratio_25','%25 oran'],['ratio_20','%20 oran']
 ];
 const PEOPLE=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 const QTY=[1,2,3,4,5,6,7,8,9,10,15,20,25,30,40,50,75,100];
-let state={accent:DEFAULT_ACCENT,candidate:{name:'',field:'Mühendislik',term:'2026 Mart'},items:[]};
+let state={accent:DEFAULT_ACCENT,items:[]};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const fmt=n=>(Math.round((Number(n)||0)*100)/100).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 function normalizeState(){
   state.accent=state.accent || state.palette?.accent || state.palette?.primary || DEFAULT_ACCENT;
-  state.candidate=state.candidate || {name:'',field:'Mühendislik',term:'2026 Mart'};
   if(!Array.isArray(state.items) && Array.isArray(state.records)) state.items=state.records;
   state.items=Array.isArray(state.items)?state.items:[];
-  state.items=state.items.map(it=>({
-    id:it.id||uid(),
-    type:it.type||it.category||'',
-    subtype:it.subtype||it.subCategory||it.kind||'',
-    period:it.period||it.stage||'after',
-    qty:Number(it.qty||it.count)||1,
-    people:Number(it.people||it.authors)||1,
-    share:it.share||it.contribution||'full',
-    isThesis:!!(it.isThesis||it.thesisProduced||it.fromThesis),
-    note:it.note||it.description||it.desc||''
-  }));
+  state.items=state.items.map(it=>{
+    const type=it.type||it.category||'';
+    let period=it.period||it.stage||'after';
+    if(type==='thesis_publication') period='before';
+    const item={
+      id:it.id||uid(),
+      type,
+      subtype:it.subtype||it.subCategory||it.kind||'',
+      period,
+      qty:Math.max(1,Number(it.qty||it.count)||1),
+      people:Math.max(1,Number(it.people||it.authors)||1),
+      share:it.share||it.contribution||'full',
+      expanded:!!it.expanded,
+      note:it.note||it.description||it.desc||''
+    };
+    item.share=validShare(item,item.share)?item.share:defaultShareFor(item);
+    return item;
+  });
 }
 function isArticleType(type){return type==='international_article'||type==='national_article'}
-function isThesisProduced(item){return item.type==='thesis_publication'||!!item.isThesis}
+function isThesisProduced(item){return item.type==='thesis_publication'}
 function scrollToSummary(){document.getElementById('ozet')?.scrollIntoView({behavior:'smooth',block:'start'});}
+function scrollToWorks(){document.getElementById('maddeler')?.scrollIntoView({behavior:'smooth',block:'start'});}
 function editItem(id){focusItem(id)}
 function focusItem(id){
   const run=()=>{
@@ -252,6 +253,7 @@ function tags(item){return subtype(item.type,item.subtype)?.[3]||[]}
 function factor(item){
   const p=Number(item.people)||1;
   if(item.share==='equal') return 1/Math.max(1,p);
+  if(item.share==='main_sole'||item.share==='main_grad') return 1;
   if(item.share==='grad_80') return .8;
   if(item.share==='ratio_50') return .5;
   if(item.share==='ratio_33') return .33;
@@ -316,33 +318,56 @@ function flash(msg){
 function updateAccent(value){state.accent=value||DEFAULT_ACCENT;applyPalette();syncAccentInput();save('Renk kaydedildi')}
 function resetAccent(){state.accent=DEFAULT_ACCENT;applyPalette();syncAccentInput();save('Varsayılan renge dönüldü')}
 function renderTheme(){syncAccentInput();}
-function hydrateCandidate(){
-  document.getElementById('candName').value=state.candidate.name||'';
-  document.getElementById('candField').value=state.candidate.field||'Mühendislik';
-  document.getElementById('candTerm').value=state.candidate.term||'2026 Mart';
+
+function isQ4(item){return item.type==='international_article' && item.subtype==='sci_q4'}
+function allowedShareOptions(item){
+  if(isArticleType(item.type)){
+    const opts=[['full','Tam puan / tek yazar'],['equal','Kişi sayısına eşit böl'],['ratio_50','%50 oran'],['ratio_33','%33 oran'],['ratio_25','%25 oran'],['ratio_20','%20 oran']];
+    if(!isQ4(item)) opts.splice(2,0,['main_sole','Başlıca yazar: tek yazar'],['main_grad','Başlıca yazar: lisansüstü öğrencisi ile']);
+    return opts;
+  }
+  if(item.type==='thesis_publication') return [['equal','Kişi sayısına eşit böl'],['full','Tam puan / tek yazar'],['ratio_50','%50 oran'],['ratio_33','%33 oran'],['ratio_25','%25 oran'],['ratio_20','%20 oran']];
+  return SHARE_OPTIONS.filter(x=>!['main_sole','main_grad'].includes(x[0]));
 }
-function updateCandidate(){
-  state.candidate={name:val('candName'),field:val('candField'),term:val('candTerm')}; save('');
+function validShare(item,share){return allowedShareOptions(item).some(x=>x[0]===share)}
+function defaultShareFor(item){return allowedShareOptions(item)[0]?.[0]||'full'}
+function ruleHint(item){
+  if(isQ4(item)) return 'Q4 makalede başlıca yazar seçimi kullanılmaz.';
+  if(isArticleType(item.type)) return 'Başlıca yazar seçimi yalnızca “tek yazar” veya “lisansüstü öğrencisi ile” biçiminde tanımlanır. Kişi/yazar sayısı ayrıca girilir.';
+  if(item.type==='thesis_publication') return 'Lisansüstü tezden üretilmiş çalışma Dr öncesi kabul edilir; Dr sonrası seçilemez.';
+  return '';
 }
+function hydrateCandidate(){return;}
+function updateCandidate(){return;}
 function val(id){return document.getElementById(id).value}
 function addItem(){
   const newId=uid();
-  state.items.push({id:newId,type:'',subtype:'',period:'after',qty:1,people:1,share:'full',isThesis:false,note:''});
+  state.items.forEach(x=>x.expanded=false);
+  state.items.push({id:newId,type:'',subtype:'',period:'after',qty:1,people:1,share:'full',expanded:true,note:''});
   save('');
   renderAll();
   focusItem(newId);
 }
 function deleteItem(id){
-  if(!confirm('Bu madde silinsin mi?')) return;
-  state.items=state.items.filter(x=>x.id!==id); save('Madde silindi'); renderAll();
+  if(!confirm('Bu çalışma silinsin mi?')) return;
+  state.items=state.items.filter(x=>x.id!==id); save('Çalışma silindi'); renderAll();
 }
 function cloneItem(id){
   const it=state.items.find(x=>x.id===id); if(!it) return;
   const newId=uid();
-  state.items.push({...it,id:newId});
-  save('Madde kopyalandı');
+  state.items.forEach(x=>x.expanded=false);
+  state.items.push({...it,id:newId,expanded:true});
+  save('Çalışma kopyalandı');
   renderAll();
   focusItem(newId);
+}
+function toggleItem(id){
+  const it=state.items.find(x=>x.id===id); if(!it) return;
+  it.expanded=!it.expanded;
+  if(it.expanded) state.items.forEach(x=>{if(x.id!==id) x.expanded=false});
+  save('');
+  renderAll();
+  if(it.expanded) focusItem(id);
 }
 function updateItem(id,key,value){
   const it=state.items.find(x=>x.id===id); if(!it) return;
@@ -356,13 +381,17 @@ function updateItem(id,key,value){
   if(key==='type'){
     const d=def(value);
     it.subtype=d?.items?.[0]?.[0]||'';
-    it.share=d?.defaultShare||'full';
-    it.qty=1; it.people=1; it.period='after';
+    it.qty=1; it.people=1;
+    it.period=value==='thesis_publication'?'before':'after';
+    it.share=defaultShareFor(it);
   }
-  if(key==='isThesis') it.isThesis=!!value;
-  if(key==='people') it.people=Number(value);
-  if(key==='qty') it.qty=Number(value);
-  if(key==='type' && !isArticleType(it.type)) it.isThesis=false;
+  if(key==='subtype' || key==='type'){
+    if(!validShare(it,it.share)) it.share=defaultShareFor(it);
+  }
+  if(key==='period' && it.type==='thesis_publication') it.period='before';
+  if(key==='people') it.people=Math.max(1,Number(value)||1);
+  if(key==='qty') it.qty=Math.max(1,Number(value)||1);
+  if(key==='share' && !validShare(it,value)) it.share=defaultShareFor(it);
   save('');
   renderAll();
 }
@@ -372,7 +401,7 @@ function selectHtml(options,value,attrs=''){
 function renderItems(){
   const root=document.getElementById('items');
   if(!state.items.length){
-    root.innerHTML=`<div class="empty"><svg viewBox="0 0 220 150" fill="none"><rect x="34" y="24" width="112" height="92" rx="17" fill="var(--chip)" stroke="var(--line)" stroke-width="3"/><rect x="55" y="48" width="72" height="9" rx="4.5" fill="var(--primary2)"/><rect x="55" y="72" width="86" height="8" rx="4" fill="var(--line)"/><rect x="55" y="93" width="62" height="8" rx="4" fill="var(--line)"/><circle cx="154" cy="95" r="31" fill="var(--surface)" stroke="var(--line)" stroke-width="3"/><path d="M141 95h26M154 82v26" stroke="var(--accent)" stroke-width="7" stroke-linecap="round"/></svg><b>Henüz madde yok</b><p>İlk çalışma maddesini eklemek için aşağıdaki ekleme alanını kullanın.</p></div>`;
+    root.innerHTML=`<div class="empty"><svg viewBox="0 0 220 150" fill="none"><rect x="34" y="24" width="112" height="92" rx="17" fill="var(--chip)" stroke="var(--line)" stroke-width="3"/><rect x="55" y="48" width="72" height="9" rx="4.5" fill="var(--primary2)"/><rect x="55" y="72" width="86" height="8" rx="4" fill="var(--line)"/><rect x="55" y="93" width="62" height="8" rx="4" fill="var(--line)"/><circle cx="154" cy="95" r="31" fill="var(--surface)" stroke="var(--line)" stroke-width="3"/><path d="M141 95h26M154 82v26" stroke="var(--accent)" stroke-width="7" stroke-linecap="round"/></svg><b>Henüz çalışma yok</b><p>İlk çalışmayı eklemek için aşağıdaki ekleme alanını kullanın.</p></div>`;
     return;
   }
   root.innerHTML=state.items.map((it,idx)=>renderItem(it,idx)).join('');
@@ -384,60 +413,53 @@ function capText(type){
   return d.cap==null ? 'Bu kategori için sistemde üst sınır tanımlı değil.' : `Bu kategoride üst sınır: ${fmt(d.cap)} puan.`;
 }
 function renderLimits(d){
-  const baseLimits=[
-    ['Toplam puan şartı','100 puan','Lisansüstü tezden üretilmiş yayın puanı hariç hesaplanır.'],
-    ['Doktora sonrası faaliyet','90 puan','Dr sonrası yapılan çalışmalardan gelen toplam.'],
-    ['SCI Q1-Q3 makale','40 puan','Dr sonrası SCI/SSCI Q1-Q2-Q3 makale puanı.'],
-    ['TR Dizin','10 puan','Dr sonrası TR Dizin kapsamındaki yayın puanı.'],
-    ['Atıf','5 puan','Atıf kaleminden sağlanması gereken asgari puan.'],
-    ['Bildiri','5 puan','Dr sonrası bilimsel toplantı / bildiri puanı.'],
-    ['Tezden üretilmiş yayın','en az 1 adet','Lisansüstü tezden üretilmiş yayın maddesi.']
-  ];
-  const requirementHtml=baseLimits.map(x=>`<div class="limit-card"><strong>${x[0]}</strong><span><b>${x[1]}</b> · ${x[2]}</span></div>`).join('');
-  const categoryHtml=Object.entries(TYPES).map(([key,t])=>{
-    const c=d.cats[key];
-    const hasCap=t.cap!=null;
-    const over=hasCap && c.raw>t.cap;
-    const remaining=hasCap ? Math.max(0, t.cap - c.capped) : null;
-    const limit=hasCap?`Üst sınır: ${fmt(t.cap)} puan`:'Üst sınır yok';
-    const now=`Girilen: ${fmt(c.raw)} · Hesaba geçen: ${fmt(c.capped)}`;
-    const remainText=hasCap?`<br>Kalan limit: ${fmt(remaining)} puan`:'';
-    return `<div class="limit-card ${over?'warn':''}"><strong>${t.name}</strong><span><b>${limit}</b><br>${now}${remainText}${over?'<br>Limit aşıldı; fazla puan hesaba katılmaz.':''}</span></div>`;
+  const requirementHtml=requirementItems(d).map(x=>{
+    const missing=x[1]<x[2];
+    const remain=Math.max(0,x[2]-x[1]);
+    const remainText=x[4]==='adet'?`${Math.ceil(remain)} adet eksik`:`${fmt(remain)} puan eksik`;
+    return `<div class="limit-card ${missing?'warn':'ok'}"><strong>${x[0]}</strong><span><b>Mevcut: ${x[4]==='adet'?Math.round(x[1]):fmt(x[1])}</b>${missing?`<br>${remainText}`:'<br>Şart tamam'}</span></div>`;
   }).join('');
-  document.getElementById('limitsGrid').innerHTML=requirementHtml+categoryHtml;
+  const cappedTypes=Object.entries(TYPES).filter(([_,t])=>t.cap!=null);
+  const capHtml=cappedTypes.map(([key,t])=>{
+    const c=d.cats[key];
+    const over=c.raw>t.cap;
+    const remaining=Math.max(0,t.cap-c.capped);
+    return `<div class="limit-card ${over?'warn':'ok'}"><strong>${t.name}</strong><span><b>Üst sınır: ${fmt(t.cap)} puan</b><br>Girilen: ${fmt(c.raw)} · Hesaba geçen: ${fmt(c.capped)}<br>Kalan limit: ${fmt(remaining)} puan${over?'<br>Limit aşıldı; fazla puan hesaba katılmaz.':''}</span></div>`;
+  }).join('');
+  document.getElementById('limitsGrid').innerHTML=`<div class="limit-card" style="grid-column:1/-1"><strong>Asgari şartlar</strong><span>Bu bölümde yalnızca asgari şartlar ve üst sınırı olan kategoriler gösterilir. Üst sınırı olmayan kategoriler tekrar listelenmez.</span></div>${requirementHtml}<div class="limit-card" style="grid-column:1/-1"><strong>Kategori üst sınırları</strong><span>Fazla girilen puanlar ham puanda görünür; hesaba geçen puan üst sınırla kısıtlanır.</span></div>${capHtml}`;
 }
 function renderItem(it,idx){
   const d=def(it.type);
   const st=subtype(it.type,it.subtype);
   const typeOpts=[['','Çalışma türü seç'],...Object.entries(TYPES).map(([k,v])=>[k,v.name])];
   const subOpts=d?d.items.map(x=>[x[0],`${x[1]} — ${fmt(x[2])} puan`]):[];
-  const periodOpts=[['after','Dr sonrası'],['before','Dr öncesi']];
-  const qtyOpts=QTY.map(n=>[n,n+' adet']);
-  const peopleOpts=PEOPLE.map(n=>[n,n+' kişi']);
-  const shareOpts=SHARE_OPTIONS;
-  return `<div class="work-card" id="item_${it.id}">
-    <div class="work-head">
-      <div class="work-title"><div class="work-icon">${d?.icon||'＋'}</div><div><b>Madde ${String(idx+1).padStart(2,'0')}</b><span>${d?esc(d.name):'Çalışma türü seçilmedi'}</span></div></div>
-      <div class="work-score"><b>${fmt(effectiveScore(it))}</b><span>hesaba geçen puan</span>${isCapped(it)?`<small>Ham puan: ${fmt(score(it))}</small>`:''}</div>
+  const periodOpts=it.type==='thesis_publication' ? [['before','Dr öncesi']] : [['after','Dr sonrası'],['before','Dr öncesi']];
+  const shareOpts=allowedShareOptions(it);
+  const collapsed=!it.expanded;
+  const hint=ruleHint(it);
+  return `<div class="work-card ${collapsed?'collapsed':''}" id="item_${it.id}">
+    <div class="work-head" onclick="if(!event.target.closest('button')) toggleItem('${it.id}')">
+      <div class="work-title"><div class="work-icon">${d?.icon||'＋'}</div><div><b>Çalışma ${String(idx+1).padStart(2,'0')}</b><span>${d?esc(d.name):'Çalışma türü seçilmedi'}</span></div></div>
+      <div style="display:flex;align-items:center;gap:12px"><div class="work-score"><b>${fmt(effectiveScore(it))}</b><span>hesaba geçen puan</span>${isCapped(it)?`<small>Ham puan: ${fmt(score(it))}</small>`:''}</div><button type="button" class="collapse-btn" onclick="toggleItem('${it.id}')">${collapsed?'Aç':'Kapat'}</button></div>
     </div>
-    <div class="work-body">
+    <div class="work-note-editor"><label>Çalışma açıklaması</label><textarea placeholder="Örn. makale adı, dergi, yıl, DOI veya kısa not" oninput="updateItem('${it.id}','note',this.value)">${esc(it.note||'')}</textarea></div>
+    ${!collapsed?`<div class="work-body">
       <div class="formrow">
         <div class="field c4"><label>1. Çalışma türü</label>${selectHtml(typeOpts,it.type,`onchange="updateItem('${it.id}','type',this.value)"`)}</div>
         ${d?`
         <div class="field c4"><label>2. Alt tür</label>${selectHtml(subOpts,it.subtype,`onchange="updateItem('${it.id}','subtype',this.value)"`)}</div>
-        <div class="field c4"><label>3. Dönem</label>${selectHtml(periodOpts,it.period,`onchange="updateItem('${it.id}','period',this.value)"`)}</div>
-        <div class="field c3"><label>4. Adet</label>${selectHtml(qtyOpts,it.qty,`onchange="updateItem('${it.id}','qty',this.value)"`)}</div>
-        <div class="field c3"><label>5. Kişi / yazar sayısı</label>${selectHtml(peopleOpts,it.people,`onchange="updateItem('${it.id}','people',this.value)"`)}</div>
+        <div class="field c4"><label>3. Dönem</label>${selectHtml(periodOpts,it.period,`onchange="updateItem('${it.id}','period',this.value)" ${it.type==='thesis_publication'?'disabled':''}`)}</div>
+        <div class="field c3"><label>4. Çalışma adedi</label><input type="number" min="1" step="1" value="${Number(it.qty)||1}" oninput="updateItem('${it.id}','qty',this.value)"></div>
+        <div class="field c3"><label>5. Kişi / yazar sayısı</label><input type="number" min="1" step="1" value="${Number(it.people)||1}" oninput="updateItem('${it.id}','people',this.value)"></div>
         <div class="field c6"><label>6. Katkı / paylaşım</label>${selectHtml(shareOpts,it.share,`onchange="updateItem('${it.id}','share',this.value)"`)}</div>
-        ${isArticleType(it.type)?`<div class="field c6"><label>7. Tez bilgisi</label><label class="checkline"><input type="checkbox" ${it.isThesis?'checked':''} onchange="updateItem('${it.id}','isThesis',this.checked)"> Lisansüstü tezden üretilmiş yayın</label></div>`:''}
-        <div class="field c12"><label>Çalışma açıklaması</label><textarea placeholder="Örn. makale adı, dergi, yıl, DOI veya kısa not" oninput="updateItem('${it.id}','note',this.value)">${esc(it.note||'')}</textarea></div>`:''}
+        ${hint?`<div class="field c12"><div class="rule-hint">${esc(hint)}</div></div>`:''}`:''}
       </div>
-      ${d?`<div class="dynamic-box"><div><strong>${esc(st?.[1]||'Alt tür seç')}</strong><div class="detail-grid"><div class="detail-chip"><small>Dönem</small><b>${it.period==='after'?'Dr sonrası':'Dr öncesi'}</b></div><div class="detail-chip"><small>Adet</small><b>${it.qty} adet</b></div><div class="detail-chip"><small>Kişi / yazar</small><b>${it.people} kişi</b></div><div class="detail-chip"><small>Paylaşım</small><b>${SHARE_OPTIONS.find(x=>x[0]===it.share)?.[1]||''}</b></div></div>${isThesisProduced(it)?'<span class="pill" style="margin-top:10px">Tezden üretildi</span>':''}<span style="margin-top:10px">${capText(it.type)}${isCapped(it)?`<span class="cap-note">Ham puan ${fmt(score(it))}; kategori üst sınırı nedeniyle hesaba giren puan ${fmt(effectiveScore(it))}.</span>`:''}</span><div class="calc-panel"><small>Puan hesabı</small><b>${clearFormula(it)}</b></div></div></div>`:''}
+      ${d?`<div class="dynamic-box"><div><strong>${esc(st?.[1]||'Alt tür seç')}</strong><div class="detail-grid"><div class="detail-chip"><small>Dönem</small><b>${it.period==='after'?'Dr sonrası':'Dr öncesi'}</b></div><div class="detail-chip"><small>Adet</small><b>${it.qty} adet</b></div><div class="detail-chip"><small>Kişi / yazar</small><b>${it.people} kişi</b></div><div class="detail-chip"><small>Paylaşım</small><b>${allowedShareOptions(it).find(x=>x[0]===it.share)?.[1]||''}</b></div></div>${isThesisProduced(it)?'<span class="pill" style="margin-top:10px">Lisansüstü tez çalışması</span>':''}<span style="margin-top:10px">${capText(it.type)}${isCapped(it)?`<span class="cap-note">Ham puan ${fmt(score(it))}; kategori üst sınırı nedeniyle hesaba giren puan ${fmt(effectiveScore(it))}.</span>`:''}</span><div class="calc-panel"><small>Puan hesabı</small><b>${clearFormula(it)}</b></div></div></div>`:''}
       <div class="actions" style="display:flex;flex-wrap:wrap;margin-top:12px">
         <button class="btn" onclick="cloneItem('${it.id}')">Kopyala</button>
         <button class="btn red" onclick="deleteItem('${it.id}')">Sil</button>
       </div>
-    </div>
+    </div>`:''}
   </div>`;
 }
 function compute(){
@@ -479,13 +501,13 @@ function renderKpis(d){
 }
 function requirementItems(d){
   return [
-    ['Toplam 100 puan',d.totalFor100,100,'Tezden üretilmiş yayın puanı hariç hesap.','puan'],
-    ['Dr sonrası 90 puan',d.post,90,'Doktora sonrası faaliyet toplamı.','puan'],
-    ['SCI Q1-Q3 40 puan',d.sci40,40,'Dr sonrası Q1-Q3 makale puanı.','puan'],
-    ['TR Dizin 10 puan',d.trAfter,10,'Dr sonrası TR Dizin etiketli puan.','puan'],
-    ['Atıf 5 puan',d.citation,5,'Atıf kategorisi üst sınır uygulanmış.','puan'],
-    ['Bildiri 5 puan',d.meetingAfter,5,'Dr sonrası bildiri puanı.','puan'],
-    ['En az 1 tez yayını',d.thesisCount,1,'Tezden üretilmiş yayın maddesi.','adet']
+    ['En az 100 puan',d.totalFor100,100,'Lisansüstü tez çalışması puanı hariç hesap.','puan'],
+    ['En az 90 puan Dr sonrası',d.post,90,'Doktora sonrası faaliyet toplamı.','puan'],
+    ['En az 40 puan SCI Q1-Q3',d.sci40,40,'Dr sonrası Q1-Q3 makale puanı.','puan'],
+    ['En az 10 puan TR Dizin',d.trAfter,10,'Dr sonrası TR Dizin etiketli puan.','puan'],
+    ['En az 5 puan atıf',d.citation,5,'Atıf kategorisi üst sınır uygulanmış.','puan'],
+    ['En az 5 puan bildiri',d.meetingAfter,5,'Dr sonrası bildiri puanı.','puan'],
+    ['En az 1 lisansüstü tez çalışması',d.thesisCount,1,'Lisansüstü Tez Çalışması türü.','adet']
   ];
 }
 function renderTopAlerts(d){
@@ -523,7 +545,7 @@ function renderList(){
   const body=document.getElementById('listBody');
   const d=compute();
   if(!valid.length){
-    body.innerHTML='<tr><td colspan="8" class="muted">Henüz listeye girecek madde yok.</td></tr>';
+    body.innerHTML='<tr><td colspan="8" class="muted">Henüz listeye girecek çalışma yok.</td></tr>';
     document.getElementById('listTotal').innerHTML='';
     return;
   }
@@ -539,7 +561,7 @@ function renderList(){
       if(!group.length) continue;
       const groupTotal=group.reduce((a,x)=>a+effectiveScore(x),0);
       rows+=`<tr class="list-type-row"><td colspan="8">${esc(typeDef.name)} · ${fmt(groupTotal)} puan</td></tr>`;
-      rows+=group.map(it=>`<tr><td>Madde ${it.idx+1}${it.note?`<span class="work-note">${esc(it.note)}</span>`:''}</td><td><span class="pill">${periodLabel(it.period)}</span>${isThesisProduced(it)?'<br><span class="pill">Tezden üretildi</span>':''}</td><td>${esc(def(it.type)?.name)}</td><td>${esc(subtype(it.type,it.subtype)?.[1])}</td><td class="note-cell">${it.note?esc(it.note):'—'}</td><td>${formula(it)}${isCapped(it)?`<br><span class="raw-score">Ham: ${fmt(score(it))} · Limit sonrası: ${fmt(effectiveScore(it))}</span>`:''}</td><td><b>${fmt(effectiveScore(it))}</b></td><td><button class="btn edit-btn" onclick="editItem('${it.id}')">Düzenle</button></td></tr>`).join('');
+      rows+=group.map(it=>`<tr><td>Çalışma ${it.idx+1}${it.note?`<span class="work-note">${esc(it.note)}</span>`:''}</td><td><span class="pill">${periodLabel(it.period)}</span>${isThesisProduced(it)?'<br><span class="pill">Lisansüstü tez çalışması</span>':''}</td><td>${esc(def(it.type)?.name)}</td><td>${esc(subtype(it.type,it.subtype)?.[1])}</td><td class="note-cell">${it.note?esc(it.note):'—'}</td><td>${formula(it)}${isCapped(it)?`<br><span class="raw-score">Ham: ${fmt(score(it))} · Limit sonrası: ${fmt(effectiveScore(it))}</span>`:''}</td><td><b>${fmt(effectiveScore(it))}</b></td><td><button class="btn edit-btn" onclick="editItem('${it.id}')">Düzenle</button></td></tr>`).join('');
     }
   }
   body.innerHTML=rows;
@@ -547,16 +569,16 @@ function renderList(){
     ['Genel toplam',d.totalOfficial],['100 puan hesabı',d.totalFor100],['Dr sonrası',d.post],['Dr öncesi',d.pre]
   ].map(r=>`<div class="sumrow"><span>${r[0]}</span><b>${fmt(r[1])}</b></div>`).join('');
 }
-function renderAll(){applyPalette();renderTheme();hydrateCandidate();renderItems();const d=compute();renderKpis(d);renderTopAlerts(d);renderChecks(d);renderSummary(d);renderLimits(d);renderList();}
+function renderAll(){applyPalette();renderTheme();renderItems();const d=compute();renderKpis(d);renderTopAlerts(d);renderChecks(d);renderSummary(d);renderLimits(d);renderList();}
 function exportJson(){
   save('');
   const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json;charset=utf-8'});
-  download(blob,'docentlik-veri-yedegi.json');
+  download(blob,'docentlik-kayitli-veri.json');
 }
 function importJson(e){
   const file=e.target.files[0]; if(!file) return;
   const r=new FileReader();
-  r.onload=()=>{try{const data=JSON.parse(r.result);state={...state,...data};normalizeState();applyPalette();save('Veri yedeği yüklendi');renderAll();}catch(err){alert('Yedek okunamadı: '+err.message)}};
+  r.onload=()=>{try{const data=JSON.parse(r.result);state={...state,...data};normalizeState();applyPalette();save('Kaydedilen veri yüklendi');renderAll();}catch(err){alert('Yedek okunamadı: '+err.message)}};
   r.readAsText(file,'utf-8'); e.target.value='';
 }
 function xlsCell(value,numeric=false){
@@ -571,14 +593,14 @@ function exportCsv(){
   });
   const d=compute();
   rows+=`<tr><td colspan="9"><b>Genel toplam</b></td>${xlsCell(d.totalOfficial,true)}${xlsCell(d.totalFor100,true)}</tr>`;
-  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><table border="1"><thead><tr><th>Madde</th><th>Dönem</th><th>Çalışma türü</th><th>Alt tür</th><th>Açıklama</th><th>Adet</th><th>Kişi</th><th>Paylaşım</th><th>Tezden üretildi</th><th>Ham puan</th><th>Hesaba geçen puan</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><table border="1"><thead><tr><th>Çalışma</th><th>Dönem</th><th>Çalışma türü</th><th>Alt tür</th><th>Açıklama</th><th>Adet</th><th>Kişi</th><th>Paylaşım</th><th>Lisansüstü tez çalışması</th><th>Ham puan</th><th>Hesaba geçen puan</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
   download(new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel;charset=utf-8'}),'docentlik-puan-listesi.xls');
 }
 function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();URL.revokeObjectURL(a.href);a.remove();}
 function clearAll(){
-  if(!confirm('Tüm maddeler silinecek. Emin misin?')) return;
+  if(!confirm('Tüm çalışmalar silinecek. Emin misin?')) return;
   const accent=state.accent||DEFAULT_ACCENT;
-  state={accent,candidate:{name:'',field:'Mühendislik',term:'2026 Mart'},items:[]};
+  state={accent,items:[]};
   save('Temizlendi'); renderAll();
 }
 load();renderAll();
