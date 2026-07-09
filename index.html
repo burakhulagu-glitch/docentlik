@@ -346,6 +346,12 @@ function cloneItem(id){
 }
 function updateItem(id,key,value){
   const it=state.items.find(x=>x.id===id); if(!it) return;
+  if(key==='note'){
+    it.note=value;
+    save('');
+    renderList();
+    return;
+  }
   it[key]=value;
   if(key==='type'){
     const d=def(value);
