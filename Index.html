@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Doçentlik Puan Hesaplayıcı — Kolay Seçimli</title>
+<style>
+ :root{
+  --bg:#f4f7fa;--surface:#ffffff;--surface2:#f8fafc;--card:#ffffff;--ink:#111827;--muted:#4b5563;
+  --line:#cbd5e1;--line-strong:#94a3b8;--primary:#2563eb;--primary2:#1d4ed8;--accent:#2563eb;
+  --gold:#d4a62a;--red:#dc2626;--amber:#d97706;--green:#16a34a;--shadow:0 8px 24px rgba(15,23,42,.06);
+  --radius:18px;--field:#ffffff;--fieldText:#111827;--chip:#eff6ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:
+  radial-gradient(circle at 15% -10%, color-mix(in srgb,var(--primary2) 22%, transparent), transparent 32%),
+  radial-gradient(circle at 90% 5%, color-mix(in srgb,var(--accent) 16%, transparent), transparent 30%),
+  var(--bg);scroll-behavior:smooth}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{display:grid;grid-template-columns:292px minmax(0,1fr);min-height:100vh}
+
+.sidebar{position:sticky;top:0;height:100vh;padding:18px;overflow:auto;background:var(--surface);color:var(--ink);box-shadow:none;z-index:20;border-right:2px solid var(--line-strong);display:flex;flex-direction:column}
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:18px;padding:10px 8px 18px;border-bottom:2px solid var(--line)}
+.brandmark{width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(--primary),var(--primary2));display:grid;place-items:center;box-shadow:0 10px 24px rgba(37,99,235,.18);overflow:hidden}
+.brand h1{font-size:18px;line-height:1.12;margin:0;color:var(--ink)}.brand p{margin:4px 0 0;color:var(--muted);font-size:12px}
+.nav{display:grid;gap:7px;margin-bottom:16px}.nav a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);border:1.5px solid transparent;padding:11px 12px;border-radius:14px;font-size:13px;font-weight:750}.nav a:hover{background:var(--chip);color:var(--primary2);border-color:var(--line-strong)}.nav i{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;background:var(--surface2);border:1.5px solid var(--line);color:var(--primary2);font-style:normal;font-size:12px}
+.themebox{padding:14px;border-radius:16px;border:2px solid var(--line-strong);background:var(--surface2);margin-bottom:12px;color:var(--muted);font-size:12px;line-height:1.5}.themebox b{display:block;color:var(--ink);margin-bottom:6px}.actions{display:grid;gap:8px;margin-top:12px}
+.palettepanel{display:grid;gap:10px;margin-top:10px}.palettepicker{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--surface);border:2px solid var(--line-strong)}.palettepicker input[type=color]{appearance:none;-webkit-appearance:none;width:56px;height:44px;border:none;background:none;padding:0;cursor:pointer}.palettepicker input[type=color]::-webkit-color-swatch-wrapper{padding:0}.palettepicker input[type=color]::-webkit-color-swatch{border:none;border-radius:10px}.palettepicker input[type=color]::-moz-color-swatch{border:none;border-radius:10px}.palettepicker strong{display:block;color:var(--ink);font-size:13px}.palettepicker span{display:block;color:var(--muted);font-size:11px;margin-top:2px}.palette-actions{display:flex;gap:8px}
+.btn{border:2px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:13px;padding:10px 13px;font-weight:850;box-shadow:none;transition:.18s}.sidebar .btn{border-color:var(--line-strong);background:var(--surface);color:var(--ink)}.btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(15,23,42,.08)}.btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;border-color:var(--primary2)}.btn.green{background:#ecfdf3;color:#166534;border-color:#86efac}.btn.red{background:#fef2f2;color:#b91c1c;border-color:#fca5a5}.btn.gold{background:#fff8e6;color:#8a5a00;border-color:#f4c86a}
+.main{padding:24px;max-width:1540px;width:100%;margin:0 auto}.panel{background:var(--surface);border:2px solid var(--line-strong);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.kpis{display:grid;grid-template-columns:repeat(7,minmax(120px,1fr));gap:10px;margin:0 0 16px}.kpi{background:var(--surface);border:2px solid var(--line-strong);border-radius:16px;padding:14px;box-shadow:none}.kpi b{display:block;font-size:23px;color:var(--ink);margin-bottom:3px}.kpi span{font-size:11px;color:var(--muted);font-weight:850}.kpi.ok{border-color:#86efac;background:#f0fdf4}.kpi.warn{border-color:#fdba74;background:#fff7ed}.kpi.bad{border-color:#fca5a5;background:#fef2f2}
+.section{margin-bottom:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px}.section-head h3{margin:0;color:var(--ink);font-size:21px;display:flex;align-items:center;gap:9px}.bubble{width:31px;height:31px;border-radius:12px;background:var(--chip);border:1.5px solid color-mix(in srgb,var(--primary) 24%, var(--line));display:grid;place-items:center;color:var(--primary2);font-size:15px}.muted{color:var(--muted);font-size:13px;line-height:1.45}.formrow{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;color:var(--muted);font-weight:900}.field input,.field select{border:2px solid var(--line-strong);border-radius:13px;background:var(--field);color:var(--fieldText);min-height:43px;padding:10px 12px;outline:none}.field input:focus,.field select:focus{border-color:var(--primary2);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 14%, transparent)}.c3{grid-column:span 3}.c4{grid-column:span 4}.c6{grid-column:span 6}.c12{grid-column:span 12}
+.split{display:grid;grid-template-columns:1.03fr .97fr;gap:16px}.checks{display:grid;gap:10px}.check{display:grid;grid-template-columns:32px 1fr auto;gap:10px;align-items:center;border:2px solid var(--line-strong);border-radius:16px;background:var(--surface);padding:11px}.check .mark{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--red);color:white;font-weight:950}.check.ok .mark{background:var(--green)}.check.warn .mark{background:var(--amber)}.check b{font-size:13px;color:var(--ink)}.check small{display:block;color:var(--muted);font-size:11px;margin-top:2px}.mini-progress{height:7px;width:86px;background:var(--surface2);border-radius:999px;overflow:hidden;border:1px solid var(--line)}.mini-progress i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--primary2));width:0%}
+.summary{display:grid;gap:8px}.sumrow{display:flex;align-items:center;justify-content:space-between;gap:16px;border:2px solid var(--line-strong);background:var(--surface);border-radius:14px;padding:10px 12px}.sumrow span{color:var(--muted);font-size:12px;font-weight:850}.sumrow b{color:var(--ink)}.limits-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.limit-card{border:2px solid var(--line-strong);border-radius:15px;background:var(--surface);padding:12px}.limit-card strong{display:block;color:var(--ink);font-size:13px;margin-bottom:5px}.limit-card span{display:block;color:var(--muted);font-size:12px;line-height:1.35}.limit-card b{color:var(--primary2)}.limit-card.warn{border-color:#fdba74;background:#fff7ed}.limit-card.ok{border-color:#86efac;background:#f0fdf4}
+.addbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:15px;border-radius:18px;border:2px dashed var(--line-strong);background:var(--surface2);margin-top:14px}.addbar .plus{width:46px;height:46px;border:2px solid var(--primary2);border-radius:15px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;display:grid;place-items:center;font-size:25px;font-weight:900;box-shadow:none}.addbar strong{display:block;color:var(--ink)}.addbar p{margin:2px 0 0;color:var(--muted);font-size:12px}.addbar .btn{margin-left:auto}
+.items{display:grid;gap:12px}.work-card{border:2px solid var(--line-strong);border-radius:21px;background:var(--surface);box-shadow:none;overflow:hidden}.work-head{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--surface2);padding:14px 16px;border-bottom:2px solid var(--line-strong)}.work-title{display:flex;gap:11px;align-items:center}.work-icon{width:45px;height:45px;border-radius:15px;background:linear-gradient(135deg,var(--primary),var(--primary2));display:grid;place-items:center;color:#fff;font-size:22px;box-shadow:none}.work-title b{display:block;color:var(--ink);font-size:15px}.work-title span{display:block;color:var(--muted);font-size:12px;margin-top:2px}.work-score{text-align:right}.work-score b{display:block;font-size:24px;color:var(--ink)}.work-score span{font-size:11px;color:var(--muted);font-weight:850}.work-score small{display:block;color:var(--red);font-size:11px;font-weight:900;margin-top:2px}.cap-note{display:block;margin-top:4px;color:var(--red);font-weight:900}.raw-score{color:var(--muted);font-size:11px;font-weight:900}.work-body{padding:16px}.dynamic-box{margin-top:12px;padding:12px;border-radius:16px;background:var(--surface2);border:2px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.dynamic-box strong{color:var(--ink);font-size:13px}.dynamic-box span{display:block;color:var(--muted);font-size:12px;margin-top:2px}.formula{color:var(--muted);font-size:12px;font-weight:800}.empty{padding:34px;border:2px dashed var(--line-strong);border-radius:22px;text-align:center;background:var(--surface2)}.empty svg{width:180px;max-width:80%;height:auto;margin-bottom:10px}.empty b{display:block;color:var(--ink);font-size:18px}.empty p{color:var(--muted);margin:8px auto 0;max-width:520px;line-height:1.5}.list-table{overflow:auto;border:2px solid var(--line-strong);border-radius:17px;background:var(--surface)}table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}th,td{padding:11px;border-bottom:1.5px solid var(--line);text-align:left;vertical-align:top}th{background:var(--surface2);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}tr:last-child td{border-bottom:none}.pill{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:var(--chip);border:1px solid color-mix(in srgb,var(--primary) 20%, var(--line));color:var(--primary2);font-size:11px;font-weight:900}.fixed-name{display:block;text-align:left;background:var(--surface2);color:var(--ink);border:2px solid var(--line-strong);box-shadow:none;border-radius:14px;padding:10px 12px;font-weight:950;font-size:13px;letter-spacing:.03em;margin-top:auto}.fileinput{display:none}.print-only{display:none}
+@media(max-width:1220px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.nav{grid-template-columns:repeat(3,1fr)}.kpis{grid-template-columns:repeat(3,1fr)}.fixed-name{display:block;text-align:left;background:var(--surface2);color:var(--ink);border:2px solid var(--line-strong);box-shadow:none;border-radius:14px;padding:10px 12px;font-weight:950;font-size:13px;letter-spacing:.03em;margin-top:auto}.addbar .btn{margin-left:0}}
+@media(max-width:820px){.sidebar{padding-bottom:18px}.main{padding:14px}.split{grid-template-columns:1fr}.limits-grid{grid-template-columns:1fr}.formrow{grid-template-columns:1fr}.c3,.c4,.c6,.c12{grid-column:auto}.kpis{grid-template-columns:1fr 1fr}.nav{grid-template-columns:1fr}.work-head{align-items:flex-start;flex-direction:column}.work-score{text-align:left}.dynamic-box{grid-template-columns:1fr}.fixed-name{display:block;text-align:left;background:var(--surface2);color:var(--ink);border:2px solid var(--line-strong);box-shadow:none;border-radius:14px;padding:10px 12px;font-weight:950;font-size:13px;letter-spacing:.03em;margin-top:auto}}
+@media print{.sidebar,.actions,.themebox,.addbar,.btn,.fixed-name{display:none!important}.app{display:block}.main{padding:0}.panel,.work-card,.kpi{box-shadow:none;border:1.5px solid #b9c1cc}body{background:#fff}.print-only{display:block}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brandmark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" width="38" height="38" fill="none">
+          <rect x="8" y="8" width="48" height="48" rx="16" fill="url(#logoGrad)"/>
+          <path d="M20 34h8v12h-8zM30 26h8v20h-8zM40 18h8v28h-8z" fill="white" opacity=".95"/>
+          <path d="M18 45c5-8 10-12 15-12 4 0 7 2 13 7" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity=".95"/>
+          <defs><linearGradient id="logoGrad" x1="12" y1="10" x2="54" y2="54"><stop stop-color="var(--primary2)"/><stop offset="1" stop-color="var(--accent)"/></linearGradient></defs>
+        </svg>
+      </div>
+      <div><h1>Doçentlik Hesaplayıcı</h1><p>Modern puan yönetim ekranı</p></div>
+    </div>
+    <nav class="nav">
+      <a href="#ozet"><i>01</i>Genel özet</a>
+      <a href="#aday"><i>02</i>Aday bilgisi</a>
+      <a href="#maddeler"><i>03</i>Çalışma maddeleri</a>
+      <a href="#sinirlar"><i>04</i>Puan sınırları</a>
+      <a href="#liste"><i>05</i>Liste</a>
+      <a href="#yedek"><i>06</i>Yedek</a>
+    </nav>
+    <div class="themebox"><b>Renk paleti</b> Tüm arayüz tek bir ana renge göre otomatik uyarlanır.
+      <div class="palettepanel">
+        <div class="palettepicker">
+          <input id="accentPicker" type="color" onchange="updateAccent(this.value)">
+          <div><strong>Ana renk seçimi</strong><span>Seçtiğin tek renk; başlıklar, butonlar ve vurgu alanları için otomatik uyarlanır.</span></div>
+        </div>
+        <div class="palette-actions">
+          <button class="btn" onclick="resetAccent()">Varsayılan renge dön</button>
+        </div>
+      </div>
+    </div>
+    <div id="yedek" class="actions">
+      <button class="btn green" onclick="save()">Kaydet</button>
+      <button class="btn" onclick="exportJson()">Yedek indir</button>
+      <button class="btn" onclick="document.getElementById('importFile').click()">Yedek yükle</button>
+      <button class="btn gold" onclick="exportCsv()">CSV indir</button>
+      <button class="btn" onclick="window.print()">PDF / Yazdır</button>
+      <button class="btn red" onclick="clearAll()">Tümünü temizle</button>
+      <input id="importFile" class="fileinput" type="file" accept="application/json,.json" onchange="importJson(event)">
+    </div>
+    <div class="fixed-name">Burak HÜLAGÜ</div>
+  </aside>
+
+  <main class="main">
+    <section id="ozet" class="kpis">
+      <div class="kpi" id="k_total100"><b>0</b><span>100 puan hesabı</span></div>
+      <div class="kpi" id="k_post"><b>0</b><span>Dr sonrası / 90</span></div>
+      <div class="kpi" id="k_sci"><b>0</b><span>SCI Q1-Q3 / 40</span></div>
+      <div class="kpi" id="k_tr"><b>0</b><span>TR Dizin / 10</span></div>
+      <div class="kpi" id="k_cite"><b>0</b><span>Atıf / 5</span></div>
+      <div class="kpi" id="k_meet"><b>0</b><span>Bildiri / 5</span></div>
+      <div class="kpi" id="k_thesis"><b>0</b><span>Tez yayını / 1</span></div>
+    </section>
+
+    <section id="aday" class="section panel">
+      <div class="section-head">
+        <div><h3><span class="bubble">👤</span>Aday Bilgisi</h3><div class="muted">Aday bilgileri özet ve yedek dosyasında düzenli görünür.</div></div>
+      </div>
+      <div class="formrow">
+        <div class="field c4"><label>Ad Soyad</label><input id="candName" placeholder="Burak Hülagü" oninput="updateCandidate()"></div>
+        <div class="field c4"><label>Temel alan</label><select id="candField" onchange="updateCandidate()"><option>Mühendislik</option><option>Fen Bilimleri ve Matematik</option><option>Sağlık Bilimleri</option><option>Sosyal, Beşeri ve İdari Bilimler</option><option>Eğitim Bilimleri</option><option>Diğer</option></select></div>
+        <div class="field c4"><label>Başvuru dönemi</label><select id="candTerm" onchange="updateCandidate()"><option>2026 Mart</option><option>2026 Ekim</option><option>2027 Mart</option><option>2027 Ekim</option><option>Diğer</option></select></div>
+      </div>
+    </section>
+
+    <section class="split">
+      <div class="panel">
+        <div class="section-head"><h3><span class="bubble">✓</span>Şart Kontrolü</h3></div>
+        <div class="checks" id="checks"></div>
+      </div>
+      <div class="panel">
+        <div class="section-head"><h3><span class="bubble">Σ</span>Puan Özeti</h3></div>
+        <div class="summary" id="summary"></div>
+      </div>
+    </section>
+
+    <section id="sinirlar" class="section panel">
+      <div class="section-head"><h3><span class="bubble">⌁</span>Puan Sınırları</h3></div>
+      <div class="limits-grid" id="limitsGrid"></div>
+    </section>
+
+    <section id="maddeler" class="section panel">
+      <div class="section-head">
+        <div><h3><span class="bubble">＋</span>Çalışma Maddeleri</h3><div class="muted">Her çalışma ayrı bir madde olarak eklenir.</div></div>
+      </div>
+      <div class="items" id="items"></div>
+      <div class="addbar">
+        <button type="button" class="plus" onclick="addItem()" aria-label="Yeni çalışma ekle">+</button>
+        <div><strong>Yeni çalışma ekle</strong><p>Makale, bildiri, atıf, proje, patent ve diğer kalemleri ayrı maddeler halinde ekleyin.</p></div>
+        <button class="btn primary" onclick="addItem()">Yeni çalışma ekle</button>
+      </div>
+    </section>
+
+    <section id="liste" class="section panel">
+      <div class="section-head"><h3><span class="bubble">▦</span>Toplu Liste</h3><button class="btn" onclick="exportCsv()">CSV indir</button></div>
+      <div class="list-table"><table><thead><tr><th>Madde</th><th>Dönem</th><th>Çalışma türü</th><th>Alt tür</th><th>Hesap</th><th>Puan</th></tr></thead><tbody id="listBody"></tbody></table></div>
+    </section>
+  </main>
+</div>
+
+<script>
+const STORAGE_KEY='docentlik_modern_secimli_v5';
+const DEFAULT_ACCENT='#2563eb';
+const TYPES={
+  international_article:{name:'Makale - Uluslararası',icon:'📄',cap:null,defaultShare:'equal',items:[
+    ['sci_q1','SCI/SSCI Q1',30,['sci','sci40']],['sci_q2','SCI/SSCI Q2',20,['sci','sci40']],['sci_q3','SCI/SSCI Q3',15,['sci','sci40']],['sci_q4','SCI/SSCI Q4',10,['sci']],
+    ['ahci','AHCI makale',20,['ahci']],['esci_scopus','ESCI / Scopus makale',10,['esci','scopus']],['other_int_index','Diğer uluslararası indeksli dergi',5,['otherIndex']],['minor','Editöre mektup / araştırma notu / özet / kritik',3,['minor']]
+  ]},
+  national_article:{name:'Makale - Ulusal',icon:'📰',cap:null,defaultShare:'equal',items:[
+    ['trdizin','TR Dizin makale',10,['trdizin']],['other_nat','Diğer hakemli ulusal dergi',4,['national']],['nat_minor','Editöre mektup / araştırma notu / özet / kritik',2,['minor']]
+  ]},
+  thesis_publication:{name:'Tezden Üretilmiş Yayın',icon:'🎓',cap:null,defaultShare:'equal',items:[
+    ['thesis_sci','SCI/SSCI/AHCI makale',20,['thesis','sci']],['thesis_esci','ESCI / Scopus makale',10,['thesis','esci']],['thesis_int','Diğer uluslararası indeksli makale',5,['thesis']],
+    ['thesis_tr','TR Dizin makale',8,['thesis','trdizin']],['thesis_book','BKCI kitap',20,['thesis','book']],['thesis_chapter','BKCI kitap bölümü',10,['thesis','chapter']],['thesis_meeting','Uluslararası tam metin bildiri',5,['thesis','meeting']]
+  ]},
+  meeting:{name:'Bilimsel Toplantı / Bildiri',icon:'🎤',cap:10,defaultShare:'equal',items:[
+    ['meeting_full_int','Uluslararası toplantı - tam metin',5,['meeting']],['meeting_abs_int','Uluslararası toplantı - özet',3,['meeting']],['meeting_other','Diğer bilimsel toplantı sunumu',3,['meeting']]
+  ]},
+  citation:{name:'Atıf',icon:'❝',cap:10,defaultShare:'full',items:[
+    ['cite_sci','SCI/SSCI/AHCI/ESCI/Scopus atfı',3,['citation']],['cite_book','BKCI / kitap atfı',2,['citation']],['cite_tr','TR Dizin atfı',2,['citation','trdizin']],['cite_other','Diğer atıf',1,['citation']]
+  ]},
+  book:{name:'Kitap / Kitap Bölümü',icon:'📚',cap:20,defaultShare:'equal',items:[
+    ['bkci_book','BKCI kapsamındaki kitap',20,['book']],['bkci_chapter','BKCI kitap bölümü',10,['chapter']],['other_book','Diğer uluslararası/ulusal kitap',5,['book']],['other_chapter','Diğer kitap bölümü',3,['chapter']]
+  ]},
+  project:{name:'Bilimsel Araştırma Projesi',icon:'🧪',cap:30,defaultShare:'full',items:[
+    ['eu_coord','AB/uluslararası proje - yürütücü',15,['project']],['eu_researcher','AB/uluslararası proje - araştırmacı',10,['project']],['national_exec','Ulusal proje - yürütücü/danışman',5,['project']],['tubitak_researcher','TÜBİTAK/ulusal proje - araştırmacı',10,['project']],['bap','BAP projesi',3,['project']]
+  ]},
+  patent:{name:'Patent / Faydalı Model',icon:'💡',cap:null,defaultShare:'equal',items:[
+    ['patent_int','Tescilli uluslararası patent',20,['patent']],['patent_nat','Tescilli ulusal patent',10,['patent']],['utility','Faydalı model',5,['patent']]
+  ]},
+  thesis_advisory:{name:'Tez Danışmanlığı',icon:'🧭',cap:10,defaultShare:'full',items:[
+    ['adv_phd','Tamamlanmış doktora tezi danışmanlığı',5,['advisory']],['adv_msc','Tamamlanmış yüksek lisans tezi danışmanlığı',3,['advisory']]
+  ]},
+  teaching:{name:'Eğitim-Öğretim / Ders',icon:'🏫',cap:6,defaultShare:'full',items:[
+    ['course_four','Dört farklı yarıyılda ders',2,['teaching']],['course_two','İki farklı yılda ders',2,['teaching']]
+  ]},
+  editorial:{name:'Editörlük',icon:'✍️',cap:4,defaultShare:'full',items:[
+    ['editor_journal','Dergi editörlüğü',4,['editorial']],['editor_book','Kitap editörlüğü',3,['editorial']],['board','Yayın kurulu / hakemlik benzeri',1,['editorial']]
+  ]},
+  award:{name:'Ödül',icon:'🏅',cap:25,defaultShare:'full',items:[
+    ['award_yok','YÖK/TÜBA/TÜBİTAK düzeyi ödül',25,['award']],['award_university','Üniversite/kurum ödülü',5,['award']]
+  ]},
+  other:{name:'Diğer',icon:'🔹',cap:10,defaultShare:'full',items:[
+    ['hindex','h-indeks / ek akademik faaliyet',5,['other']],['top300','İlk 300 üniversitede araştırma/öğretim faaliyeti',10,['other']]
+  ]}
+};
+const SHARE_OPTIONS=[
+ ['full','Tam puan'],['equal','Kişi sayısına eşit böl'],['main','Başlıca yazar / yürütücü'],['grad_80','Lisansüstü öğrenci ile yapılan çalışma (%80)'],['ratio_50','%50 oran'],['ratio_33','%33 oran'],['ratio_25','%25 oran'],['ratio_20','%20 oran']
+];
+const PEOPLE=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+const QTY=[1,2,3,4,5,6,7,8,9,10,15,20,25,30,40,50,75,100];
+let state={accent:DEFAULT_ACCENT,candidate:{name:'',field:'Mühendislik',term:'2026 Mart'},items:[]};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const fmt=n=>(Math.round((Number(n)||0)*100)/100).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function def(type){return TYPES[type]||null}
+function subtype(type,id){return (def(type)?.items||[]).find(x=>x[0]===id)||null}
+function base(item){return subtype(item.type,item.subtype)?.[2]||0}
+function tags(item){return subtype(item.type,item.subtype)?.[3]||[]}
+function factor(item){
+  const p=Number(item.people)||1;
+  if(item.share==='equal') return 1/Math.max(1,p);
+  if(item.share==='grad_80') return .8;
+  if(item.share==='ratio_50') return .5;
+  if(item.share==='ratio_33') return .33;
+  if(item.share==='ratio_25') return .25;
+  if(item.share==='ratio_20') return .2;
+  return 1;
+}
+function score(item){return base(item)*(Number(item.qty)||1)*factor(item)}
+function categoryRaw(type){return state.items.filter(x=>x.type===type).reduce((a,x)=>a+score(x),0)}
+function categoryCap(type){const d=def(type); return d ? d.cap : null}
+function categoryScale(type){
+  const raw=categoryRaw(type), cap=categoryCap(type);
+  if(cap==null || raw<=0) return 1;
+  return Math.min(1, cap/raw);
+}
+function effectiveScore(item){return score(item)*categoryScale(item.type)}
+function isCapped(item){return Math.abs(score(item)-effectiveScore(item))>0.004}
+function rawFormula(item){return `${fmt(base(item))} × ${item.qty||1} × ${factor(item).toFixed(2)} = ${fmt(score(item))}`}
+function formula(item){
+  const raw=rawFormula(item), eff=effectiveScore(item);
+  return isCapped(item) ? `${raw} → limit sonrası ${fmt(eff)}` : raw;
+}
+function hexToRgb(hex){
+  const h=(hex||'').replace('#','');
+  if(h.length!==6) return {r:37,g:99,b:235};
+  return {r:parseInt(h.slice(0,2),16),g:parseInt(h.slice(2,4),16),b:parseInt(h.slice(4,6),16)};
+}
+function rgbToHex(r,g,b){return '#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('');}
+function mix(hex1,hex2,ratio){
+  const a=hexToRgb(hex1), b=hexToRgb(hex2), t=Math.max(0,Math.min(1,ratio));
+  return rgbToHex(a.r+(b.r-a.r)*t,a.g+(b.g-a.g)*t,a.b+(b.b-a.b)*t);
+}
+function darken(hex,amt=.16){return mix(hex,'#0f172a',amt)}
+function lighten(hex,amt=.88){return mix(hex,'#ffffff',amt)}
+function syncAccentInput(){const p=document.getElementById('accentPicker'); if(p) p.value=state.accent||DEFAULT_ACCENT;}
+function applyPalette(){
+  const accent=state.accent||DEFAULT_ACCENT;
+  document.documentElement.style.setProperty('--primary', accent);
+  document.documentElement.style.setProperty('--primary2', darken(accent,.18));
+  document.documentElement.style.setProperty('--accent', accent);
+  document.documentElement.style.setProperty('--chip', lighten(accent,.88));
+}
+function load(){
+  try{const raw=localStorage.getItem(STORAGE_KEY); if(raw) state={...state,...JSON.parse(raw)}}catch(e){}
+  if(!state.accent){
+    const legacy=state.palette?.accent || state.palette?.primary || DEFAULT_ACCENT;
+    state.accent=legacy;
+  }
+  applyPalette();
+}
+function save(msg='Kaydedildi'){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  if(msg) flash(msg);
+}
+function flash(msg){
+  const old=document.querySelector('.toast'); if(old) old.remove();
+  const el=document.createElement('div'); el.className='toast'; el.textContent=msg;
+  Object.assign(el.style,{position:'fixed',right:'18px',bottom:'18px',zIndex:1000,background:'var(--primary)',color:'#fff',padding:'11px 14px',borderRadius:'13px',fontWeight:900,boxShadow:'0 14px 34px rgba(15,23,42,.18)'});
+  document.body.appendChild(el); setTimeout(()=>el.remove(),1300);
+}
+function updateAccent(value){state.accent=value||DEFAULT_ACCENT;applyPalette();syncAccentInput();save('Renk kaydedildi')}
+function resetAccent(){state.accent=DEFAULT_ACCENT;applyPalette();syncAccentInput();save('Varsayılan renge dönüldü')}
+function renderTheme(){syncAccentInput();}
+function hydrateCandidate(){
+  document.getElementById('candName').value=state.candidate.name||'';
+  document.getElementById('candField').value=state.candidate.field||'Mühendislik';
+  document.getElementById('candTerm').value=state.candidate.term||'2026 Mart';
+}
+function updateCandidate(){
+  state.candidate={name:val('candName'),field:val('candField'),term:val('candTerm')}; save('');
+}
+function val(id){return document.getElementById(id).value}
+function addItem(){
+  state.items.push({id:uid(),type:'',subtype:'',period:'after',qty:1,people:1,share:'full'});
+  save('');
+  renderAll();
+  setTimeout(()=>document.querySelector(`#item_${state.items[state.items.length-1].id}`)?.scrollIntoView({behavior:'smooth',block:'center'}),50);
+}
+function deleteItem(id){
+  if(!confirm('Bu madde silinsin mi?')) return;
+  state.items=state.items.filter(x=>x.id!==id); save('Madde silindi'); renderAll();
+}
+function cloneItem(id){
+  const it=state.items.find(x=>x.id===id); if(!it) return;
+  state.items.push({...it,id:uid()}); save('Madde kopyalandı'); renderAll();
+}
+function updateItem(id,key,value){
+  const it=state.items.find(x=>x.id===id); if(!it) return;
+  it[key]=value;
+  if(key==='type'){
+    const d=def(value);
+    it.subtype=d?.items?.[0]?.[0]||'';
+    it.share=d?.defaultShare||'full';
+    it.qty=1; it.people=1; it.period='after';
+  }
+  if(key==='people') it.people=Number(value);
+  if(key==='qty') it.qty=Number(value);
+  save('');
+  renderAll();
+}
+function selectHtml(options,value,attrs=''){
+  return `<select ${attrs}>${options.map(o=>`<option value="${esc(o[0])}" ${String(value)===String(o[0])?'selected':''}>${esc(o[1])}</option>`).join('')}</select>`;
+}
+function renderItems(){
+  const root=document.getElementById('items');
+  if(!state.items.length){
+    root.innerHTML=`<div class="empty"><svg viewBox="0 0 220 150" fill="none"><rect x="34" y="24" width="112" height="92" rx="17" fill="var(--chip)" stroke="var(--line)" stroke-width="3"/><rect x="55" y="48" width="72" height="9" rx="4.5" fill="var(--primary2)"/><rect x="55" y="72" width="86" height="8" rx="4" fill="var(--line)"/><rect x="55" y="93" width="62" height="8" rx="4" fill="var(--line)"/><circle cx="154" cy="95" r="31" fill="var(--surface)" stroke="var(--line)" stroke-width="3"/><path d="M141 95h26M154 82v26" stroke="var(--accent)" stroke-width="7" stroke-linecap="round"/></svg><b>Henüz madde yok</b><p>İlk çalışma maddesini eklemek için aşağıdaki ekleme alanını kullanın.</p></div>`;
+    return;
+  }
+  root.innerHTML=state.items.map((it,idx)=>renderItem(it,idx)).join('');
+}
+
+function capText(type){
+  const d=def(type);
+  if(!d) return '';
+  return d.cap==null ? 'Bu kategori için sistemde üst sınır tanımlı değil.' : `Bu kategoride üst sınır: ${fmt(d.cap)} puan.`;
+}
+function renderLimits(d){
+  const baseLimits=[
+    ['Toplam puan şartı','100 puan','Lisansüstü tezden üretilmiş yayın puanı hariç hesaplanır.'],
+    ['Doktora sonrası faaliyet','90 puan','Dr sonrası yapılan çalışmalardan gelen toplam.'],
+    ['SCI Q1-Q3 makale','40 puan','Dr sonrası SCI/SSCI Q1-Q2-Q3 makale puanı.'],
+    ['TR Dizin','10 puan','Dr sonrası TR Dizin kapsamındaki yayın puanı.'],
+    ['Atıf','5 puan','Atıf kaleminden sağlanması gereken asgari puan.'],
+    ['Bildiri','5 puan','Dr sonrası bilimsel toplantı / bildiri puanı.'],
+    ['Tezden üretilmiş yayın','en az 1 adet','Lisansüstü tezden üretilmiş yayın maddesi.']
+  ];
+  const requirementHtml=baseLimits.map(x=>`<div class="limit-card"><strong>${x[0]}</strong><span><b>${x[1]}</b> · ${x[2]}</span></div>`).join('');
+  const categoryHtml=Object.entries(TYPES).map(([key,t])=>{
+    const c=d.cats[key];
+    const hasCap=t.cap!=null;
+    const over=hasCap && c.raw>t.cap;
+    const remaining=hasCap ? Math.max(0, t.cap - c.capped) : null;
+    const limit=hasCap?`Üst sınır: ${fmt(t.cap)} puan`:'Üst sınır yok';
+    const now=`Girilen: ${fmt(c.raw)} · Hesaba geçen: ${fmt(c.capped)}`;
+    const remainText=hasCap?`<br>Kalan limit: ${fmt(remaining)} puan`:'';
+    return `<div class="limit-card ${over?'warn':''}"><strong>${t.name}</strong><span><b>${limit}</b><br>${now}${remainText}${over?'<br>Limit aşıldı; fazla puan hesaba katılmaz.':''}</span></div>`;
+  }).join('');
+  document.getElementById('limitsGrid').innerHTML=requirementHtml+categoryHtml;
+}
+function renderItem(it,idx){
+  const d=def(it.type);
+  const st=subtype(it.type,it.subtype);
+  const typeOpts=[['','Çalışma türü seç'],...Object.entries(TYPES).map(([k,v])=>[k,v.name])];
+  const subOpts=d?d.items.map(x=>[x[0],`${x[1]} — ${fmt(x[2])} puan`]):[];
+  const periodOpts=[['after','Dr sonrası'],['before','Dr öncesi']];
+  const qtyOpts=QTY.map(n=>[n,n+' adet']);
+  const peopleOpts=PEOPLE.map(n=>[n,n+' kişi']);
+  const shareOpts=SHARE_OPTIONS;
+  return `<div class="work-card" id="item_${it.id}">
+    <div class="work-head">
+      <div class="work-title"><div class="work-icon">${d?.icon||'＋'}</div><div><b>Madde ${String(idx+1).padStart(2,'0')}</b><span>${d?esc(d.name):'Çalışma türü seçilmedi'}</span></div></div>
+      <div class="work-score"><b>${fmt(effectiveScore(it))}</b><span>hesaba geçen puan</span>${isCapped(it)?`<small>Ham puan: ${fmt(score(it))}</small>`:''}</div>
+    </div>
+    <div class="work-body">
+      <div class="formrow">
+        <div class="field c4"><label>1. Çalışma türü</label>${selectHtml(typeOpts,it.type,`onchange="updateItem('${it.id}','type',this.value)"`)}</div>
+        ${d?`
+        <div class="field c4"><label>2. Alt tür</label>${selectHtml(subOpts,it.subtype,`onchange="updateItem('${it.id}','subtype',this.value)"`)}</div>
+        <div class="field c4"><label>3. Dönem</label>${selectHtml(periodOpts,it.period,`onchange="updateItem('${it.id}','period',this.value)"`)}</div>
+        <div class="field c3"><label>4. Adet</label>${selectHtml(qtyOpts,it.qty,`onchange="updateItem('${it.id}','qty',this.value)"`)}</div>
+        <div class="field c3"><label>5. Kişi / yazar sayısı</label>${selectHtml(peopleOpts,it.people,`onchange="updateItem('${it.id}','people',this.value)"`)}</div>
+        <div class="field c6"><label>6. Katkı / paylaşım</label>${selectHtml(shareOpts,it.share,`onchange="updateItem('${it.id}','share',this.value)"`)}</div>`:''}
+      </div>
+      ${d?`<div class="dynamic-box"><div><strong>${esc(st?.[1]||'Alt tür seç')}</strong><span>${it.period==='after'?'Doktora sonrası':'Doktora öncesi'} · ${it.qty} adet · ${it.people} kişi · ${SHARE_OPTIONS.find(x=>x[0]===it.share)?.[1]||''}<br>${capText(it.type)}${isCapped(it)?`<span class="cap-note">Ham puan ${fmt(score(it))}; kategori üst sınırı nedeniyle bu maddeden hesaba giren puan ${fmt(effectiveScore(it))}.</span>`:''}</span></div><div class="formula">${formula(it)}</div></div>`:''}
+      <div class="actions" style="display:flex;flex-wrap:wrap;margin-top:12px">
+        <button class="btn" onclick="cloneItem('${it.id}')">Kopyala</button>
+        <button class="btn red" onclick="deleteItem('${it.id}')">Sil</button>
+      </div>
+    </div>
+  </div>`;
+}
+function compute(){
+  const cats={}; Object.keys(TYPES).forEach(k=>cats[k]={raw:0,afterRaw:0,beforeRaw:0,capped:0,after:0,before:0,count:0});
+  let sci40=0,trAfter=0,meetingAfterRaw=0,thesisCount=0;
+  for(const it of state.items){
+    if(!it.type || !cats[it.type]) continue;
+    const sc=score(it); const c=cats[it.type]; c.raw+=sc;c.count++;
+    if(it.period==='after') c.afterRaw+=sc; else c.beforeRaw+=sc;
+    const tg=tags(it);
+    if(it.period==='after' && it.type==='international_article' && tg.includes('sci40')) sci40+=sc;
+    if(it.period==='after' && tg.includes('trdizin')) trAfter+=sc;
+    if(it.period==='after' && it.type==='meeting') meetingAfterRaw+=sc;
+    if(it.type==='thesis_publication') thesisCount++;
+  }
+  Object.entries(cats).forEach(([k,c])=>{
+    const cap=TYPES[k].cap;
+    c.capped=cap==null?c.raw:Math.min(c.raw,cap);
+    const scale=c.raw>0?c.capped/c.raw:0;
+    c.after=c.afterRaw*scale;c.before=c.beforeRaw*scale;
+  });
+  const totalOfficial=Object.values(cats).reduce((a,c)=>a+c.capped,0);
+  const thesis=cats.thesis_publication.capped;
+  const totalFor100=totalOfficial-thesis;
+  const post=Object.values(cats).reduce((a,c)=>a+c.after,0);
+  const pre=Object.values(cats).reduce((a,c)=>a+c.before,0);
+  const citation=cats.citation.capped;
+  const meetingAfter=Math.min(meetingAfterRaw,TYPES.meeting.cap);
+  return {cats,totalOfficial,thesis,totalFor100,post,pre,sci40,trAfter,citation,meetingAfter,thesisCount};
+}
+function status(value,target){return value>=target?'ok':(value>=target*.65?'warn':'bad')}
+function setKpi(id,value,target){
+  const el=document.getElementById(id); el.className='kpi '+status(value,target); el.querySelector('b').textContent=fmt(value);
+}
+function renderKpis(d){
+  setKpi('k_total100',d.totalFor100,100);setKpi('k_post',d.post,90);setKpi('k_sci',d.sci40,40);setKpi('k_tr',d.trAfter,10);setKpi('k_cite',d.citation,5);setKpi('k_meet',d.meetingAfter,5);
+  const kt=document.getElementById('k_thesis'); kt.className='kpi '+status(d.thesisCount,1); kt.querySelector('b').textContent=d.thesisCount;
+}
+function renderChecks(d){
+  const items=[
+    ['Toplam 100 puan',d.totalFor100,100,'Tezden üretilmiş yayın puanı hariç hesap.'],
+    ['Dr sonrası 90 puan',d.post,90,'Doktora sonrası faaliyet toplamı.'],
+    ['SCI Q1-Q3 40 puan',d.sci40,40,'Dr sonrası Q1-Q3 makale puanı.'],
+    ['TR Dizin 10 puan',d.trAfter,10,'Dr sonrası TR Dizin etiketli puan.'],
+    ['Atıf 5 puan',d.citation,5,'Atıf kategorisi üst sınır uygulanmış.'],
+    ['Bildiri 5 puan',d.meetingAfter,5,'Dr sonrası bildiri puanı.'],
+    ['En az 1 tez yayını',d.thesisCount,1,'Tezden üretilmiş yayın maddesi.']
+  ];
+  document.getElementById('checks').innerHTML=items.map(x=>{
+    const cls=status(x[1],x[2]), pct=Math.min(100,x[1]/x[2]*100);
+    return `<div class="check ${cls==='bad'?'':cls}"><div class="mark">${cls==='ok'?'✓':'!'}</div><div><b>${x[0]}</b><small>${fmt(x[1])} / ${fmt(x[2])} · ${x[3]}</small></div><div class="mini-progress"><i style="width:${pct}%"></i></div></div>`;
+  }).join('');
+}
+function renderSummary(d){
+  const rows=[
+    ['Genel toplam',d.totalOfficial],['100 puan hesabı',d.totalFor100],['Dr sonrası toplam',d.post],['Dr öncesi toplam',d.pre],['Tez yayınları',d.thesis],['SCI Q1-Q3',d.sci40],['TR Dizin',d.trAfter],['Atıf',d.citation],['Bildiri Dr sonrası',d.meetingAfter]
+  ];
+  document.getElementById('summary').innerHTML=rows.map(r=>`<div class="sumrow"><span>${r[0]}</span><b>${fmt(r[1])}</b></div>`).join('');
+}
+function renderList(){
+  const rows=state.items.filter(x=>x.type).map((it,idx)=>`<tr><td>Madde ${idx+1}</td><td><span class="pill">${it.period==='after'?'Dr sonrası':'Dr öncesi'}</span></td><td>${esc(def(it.type)?.name)}</td><td>${esc(subtype(it.type,it.subtype)?.[1])}</td><td>${formula(it)}${isCapped(it)?`<br><span class="raw-score">Ham: ${fmt(score(it))} · Limit sonrası: ${fmt(effectiveScore(it))}</span>`:''}</td><td><b>${fmt(effectiveScore(it))}</b></td></tr>`).join('');
+  document.getElementById('listBody').innerHTML=rows||'<tr><td colspan="6" class="muted">Henüz listeye girecek madde yok.</td></tr>';
+}
+function renderAll(){applyPalette();renderTheme();hydrateCandidate();renderItems();const d=compute();renderKpis(d);renderChecks(d);renderSummary(d);renderLimits(d);renderList();}
+function exportJson(){
+  save('');
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json;charset=utf-8'});
+  download(blob,'docentlik-yedek.json');
+}
+function importJson(e){
+  const file=e.target.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=()=>{try{const data=JSON.parse(r.result);state={...state,...data};state.accent=state.accent || state.palette?.accent || state.palette?.primary || DEFAULT_ACCENT;applyPalette();save('Yedek yüklendi');renderAll();}catch(err){alert('Yedek okunamadı: '+err.message)}};
+  r.readAsText(file,'utf-8'); e.target.value='';
+}
+function exportCsv(){
+  const head=['Madde','Donem','Calisma turu','Alt tur','Adet','Kisi','Paylasim','Hesap','Ham puan','Hesaba gecen puan'];
+  const data=state.items.filter(x=>x.type).map((it,i)=>[i+1,it.period,def(it.type)?.name,subtype(it.type,it.subtype)?.[1],it.qty,it.people,SHARE_OPTIONS.find(s=>s[0]===it.share)?.[1],formula(it),score(it),effectiveScore(it)]);
+  const csv=[head,...data].map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');
+  download(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),'docentlik-maddeler.csv');
+}
+function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();URL.revokeObjectURL(a.href);a.remove();}
+function clearAll(){
+  if(!confirm('Tüm maddeler silinecek. Emin misin?')) return;
+  const accent=state.accent||DEFAULT_ACCENT;
+  state={accent,candidate:{name:'',field:'Mühendislik',term:'2026 Mart'},items:[]};
+  save('Temizlendi'); renderAll();
+}
+load();renderAll();
+</script>
+</body>
+</html>
