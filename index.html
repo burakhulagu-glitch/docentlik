@@ -230,7 +230,21 @@ function normalizeState(){
 function isArticleType(type){return type==='international_article'||type==='national_article'}
 function isThesisProduced(item){return item.type==='thesis_publication'||!!item.isThesis}
 function scrollToSummary(){document.getElementById('ozet')?.scrollIntoView({behavior:'smooth',block:'start'});}
-function editItem(id){const el=document.getElementById('item_'+id); if(el){el.scrollIntoView({behavior:'smooth',block:'center'}); el.classList.add('focus-flash'); setTimeout(()=>el.classList.remove('focus-flash'),1200);}}
+function editItem(id){focusItem(id)}
+function focusItem(id){
+  const run=()=>{
+    const el=document.getElementById('item_'+id);
+    if(!el) return false;
+    const y=el.getBoundingClientRect().top+window.pageYOffset-90;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+    el.classList.add('focus-flash');
+    const first=el.querySelector('select, textarea, input');
+    setTimeout(()=>{try{first?.focus({preventScroll:true})}catch(e){}},420);
+    setTimeout(()=>el.classList.remove('focus-flash'),1600);
+    return true;
+  };
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ if(!run()) setTimeout(run,180); }));
+}
 function def(type){return TYPES[type]||null}
 function subtype(type,id){return (def(type)?.items||[]).find(x=>x[0]===id)||null}
 function base(item){return subtype(item.type,item.subtype)?.[2]||0}
@@ -316,10 +330,7 @@ function addItem(){
   state.items.push({id:newId,type:'',subtype:'',period:'after',qty:1,people:1,share:'full',isThesis:false,note:''});
   save('');
   renderAll();
-  setTimeout(()=>{
-    const el=document.getElementById('item_'+newId);
-    if(el){el.scrollIntoView({behavior:'smooth',block:'center'}); const first=el.querySelector('select'); if(first) first.focus();}
-  },120);
+  focusItem(newId);
 }
 function deleteItem(id){
   if(!confirm('Bu madde silinsin mi?')) return;
@@ -327,7 +338,11 @@ function deleteItem(id){
 }
 function cloneItem(id){
   const it=state.items.find(x=>x.id===id); if(!it) return;
-  state.items.push({...it,id:uid()}); save('Madde kopyalandı'); renderAll();
+  const newId=uid();
+  state.items.push({...it,id:newId});
+  save('Madde kopyalandı');
+  renderAll();
+  focusItem(newId);
 }
 function updateItem(id,key,value){
   const it=state.items.find(x=>x.id===id); if(!it) return;
