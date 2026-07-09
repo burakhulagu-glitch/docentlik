@@ -393,6 +393,7 @@ function renderTheme(){syncAccentInput();}
 function isQ4(item){return item.type==='international_article' && item.subtype==='sci_q4'}
 function allowedShareOptions(item){
   if(isArticleType(item.type)) return [['equal','Doçentlik yazar kuralına göre hesapla']];
+  if(item.type==='meeting') return [['equal','Kişi sayısına göre hesapla']];
   if(item.type==='thesis_publication') return [['equal','Kişi sayısına göre hesapla'],['full','Tam puan']];
   return SHARE_OPTIONS;
 }
@@ -402,6 +403,7 @@ function ruleHint(item){
   if(isQ4(item)) return 'Q4 makalede başlıca yazar seçimi kullanılmaz. Puan yalnızca kişi/yazar sayısına göre hesaplanır.';
   if(isArticleType(item.type)) return 'Makale puanı başlıca yazar durumuna göre hesaplanır: başlıca yazar değilse kişi/yazar sayısına bölünür, tek yazarlı yayında tam puan alınır, lisansüstü öğrencisi ile yayında 0,80 katsayı uygulanır.';
   if(item.type==='thesis_publication') return 'Lisansüstü tez çalışması Dr öncesi kabul edilir; Dr sonrası seçilemez.';
+  if(item.type==='meeting') return 'Bildiri puanı kişi/yazar sayısına göre bölünür.';
   return '';
 }
 
