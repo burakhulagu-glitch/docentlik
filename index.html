@@ -411,6 +411,7 @@ function addItemFromEmpty(){
   }else addItem();
 }
 function addItem(){
+  const wasEmpty=state.items.length===0;
   const newId=uid();
   state.items.forEach(x=>x.expanded=false);
   state.items.push({id:newId,type:'',subtype:'',period:'after',qty:1,people:1,share:'full',main:'none',expanded:true,note:''});
@@ -418,7 +419,7 @@ function addItem(){
   save('');
   renderAll();
   focusItem(newId);
-  addConfettiBurst(newId);
+  if(wasEmpty) addConfettiBurst(newId);
 }
 function deleteItem(id){
   if(!confirm('Bu çalışma silinsin mi?')) return;
@@ -549,11 +550,10 @@ function renderItem(it,idx){
   const mainOpts=mainAuthorOptions(it);
   const collapsed=!it.expanded;
   const hint=ruleHint(it);
-  const done=isWorkComplete(it);
   const added=lastAddedId===it.id;
   return `<div class="work-card ${collapsed?'collapsed':''} ${added?'just-added':''}" id="item_${it.id}">
     <div class="work-head" onclick="if(!event.target.closest('button')) toggleItem('${it.id}')">
-      <div class="work-title"><div class="work-icon">${d?.icon||'＋'}</div><div><b>Çalışma ${String(idx+1).padStart(2,'0')}</b><span>${d?esc(d.name):'Çalışma türü seçilmedi'}</span>${done?'<span class="done-badge">✓ Tamamlandı</span>':''}</div></div>
+      <div class="work-title"><div class="work-icon">${d?.icon||'＋'}</div><div><b>Çalışma ${String(idx+1).padStart(2,'0')}</b><span>${d?esc(d.name):'Çalışma türü seçilmedi'}</span></div></div>
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end"><div class="work-score"><b>${fmt(effectiveScore(it))}</b><span>hesaba geçen puan</span>${isCapped(it)?`<small>Ham puan: ${fmt(score(it))}</small>`:''}</div><button type="button" class="collapse-btn" onclick="toggleItem('${it.id}')">${collapsed?'Aç':'Kapat'}</button><button type="button" class="btn red edit-btn" onclick="deleteItem('${it.id}')">Sil</button></div>
     </div>
     <div class="work-note-editor"><label>Çalışma açıklaması</label><textarea placeholder="Örn. makale adı, dergi, yıl, DOI veya kısa not" oninput="updateItem('${it.id}','note',this.value)">${esc(it.note||'')}</textarea></div>
