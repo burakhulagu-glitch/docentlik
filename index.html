@@ -241,7 +241,8 @@ function normalizeState(){
     };
     item.share=validShare(item,item.share)?item.share:defaultShareFor(item);
     item.main=validMainAuthor(item,item.main)?item.main:defaultMainAuthor(item);
-    if(item.main==='sole') item.people=1;
+      if(item.main==='sole') item.people=1;
+    if(item.main==='grad' && item.people<2) item.people=2;
     return item;
   });
 }
@@ -270,19 +271,23 @@ function base(item){return subtype(item.type,item.subtype)?.[2]||0}
 function tags(item){return subtype(item.type,item.subtype)?.[3]||[]}
 function factor(item){
   const p=Math.max(1,Number(item.people)||1);
+  if(isArticleType(item.type) && !isQ4(item)){
+    if(item.main==='sole') return 1;
+    if(item.main==='grad') return 0.8;
+  }
   if(item.share==='equal') return 1/p;
   return 1;
 }
 function mainAuthorLabel(item){
   if(!isArticleType(item.type)) return '';
   if(isQ4(item)) return 'Q4 makalede başlıca yazar şartı kullanılmaz';
-  if(item.main==='sole') return 'Başlıca yazar: tek yazarlı yayın';
-  if(item.main==='grad') return 'Başlıca yazar: lisansüstü öğrencisi ile';
+  if(item.main==='sole') return 'Başlıca yazar: tek yazarlı yayın / tam puan';
+  if(item.main==='grad') return 'Başlıca yazar: lisansüstü öğrencisi ile / 0,80 katsayı';
   return 'Başlıca yazar değil';
 }
 function mainAuthorOptions(item){
   if(!isArticleType(item.type) || isQ4(item)) return [];
-  return [['none','Başlıca yazar değil'],['sole','Tek yazarlı yayın'],['grad','Lisansüstü öğrencisi ile']];
+  return [['none','Başlıca yazar değil'],['sole','Tek yazarlı yayın / tam puan'],['grad','Lisansüstü öğrencisi ile / 0,80']];
 }
 function validMainAuthor(item,value){
   if(!isArticleType(item.type)) return value==='none' || !value;
@@ -387,7 +392,7 @@ function renderTheme(){syncAccentInput();}
 
 function isQ4(item){return item.type==='international_article' && item.subtype==='sci_q4'}
 function allowedShareOptions(item){
-  if(isArticleType(item.type)) return [['equal','Kişi/yazar sayısına göre hesapla']];
+  if(isArticleType(item.type)) return [['equal','Doçentlik yazar kuralına göre hesapla']];
   if(item.type==='thesis_publication') return [['equal','Kişi sayısına göre hesapla'],['full','Tam puan']];
   return SHARE_OPTIONS;
 }
@@ -395,7 +400,7 @@ function validShare(item,share){return allowedShareOptions(item).some(x=>x[0]===
 function defaultShareFor(item){return allowedShareOptions(item)[0]?.[0]||'full'}
 function ruleHint(item){
   if(isQ4(item)) return 'Q4 makalede başlıca yazar seçimi kullanılmaz. Puan yalnızca kişi/yazar sayısına göre hesaplanır.';
-  if(isArticleType(item.type)) return 'Makale puanı kişi/yazar sayısına göre hesaplanır. Başlıca yazar durumu ayrı bir şart bilgisidir; puan katsayısını değiştirmez.';
+  if(isArticleType(item.type)) return 'Makale puanı başlıca yazar durumuna göre hesaplanır: başlıca yazar değilse kişi/yazar sayısına bölünür, tek yazarlı yayında tam puan alınır, lisansüstü öğrencisi ile yayında 0,80 katsayı uygulanır.';
   if(item.type==='thesis_publication') return 'Lisansüstü tez çalışması Dr öncesi kabul edilir; Dr sonrası seçilemez.';
   return '';
 }
@@ -471,12 +476,14 @@ function updateItem(id,key,value){
   if(key==='people') {
     it.people=Math.max(1,Number(value)||1);
     if(it.main==='sole' && it.people!==1) it.main='none';
+    if(it.main==='grad' && it.people<2) it.people=2;
   }
   if(key==='qty') it.qty=Math.max(1,Number(value)||1);
   if(key==='share' && !validShare(it,value)) it.share=defaultShareFor(it);
   if(key==='main') {
     it.main=validMainAuthor(it,value)?value:defaultMainAuthor(it);
     if(it.main==='sole') it.people=1;
+    if(it.main==='grad' && it.people<2) it.people=2;
   }
   if(!validMainAuthor(it,it.main)) it.main=defaultMainAuthor(it);
   const afterD=compute();
@@ -712,11 +719,11 @@ function exportCsv(){
   const valid=state.items.map((it,idx)=>({...it,idx})).filter(x=>x.type);
   let rows='';
   valid.forEach(it=>{
-    rows+=`<tr>${xlsCell(it.idx+1,true)}${xlsCell(periodLabel(it.period))}${xlsCell(def(it.type)?.name)}${xlsCell(subtype(it.type,it.subtype)?.[1])}${xlsCell(it.note||'')}${xlsCell(Number(it.qty)||1,true)}${xlsCell(Number(it.people)||1,true)}${xlsCell(SHARE_OPTIONS.find(s=>s[0]===it.share)?.[1])}${xlsCell(isThesisProduced(it)?'Evet':'Hayır')}${xlsCell(score(it),true)}${xlsCell(effectiveScore(it),true)}</tr>`;
+    rows+=`<tr>${xlsCell(it.idx+1,true)}${xlsCell(periodLabel(it.period))}${xlsCell(def(it.type)?.name)}${xlsCell(subtype(it.type,it.subtype)?.[1])}${xlsCell(it.note||'')}${xlsCell(Number(it.qty)||1,true)}${xlsCell(Number(it.people)||1,true)}${xlsCell(allowedShareOptions(it).find(s=>s[0]===it.share)?.[1]||'')}${xlsCell(isArticleType(it.type)?mainAuthorLabel(it):'')}${xlsCell(isThesisProduced(it)?'Evet':'Hayır')}${xlsCell(score(it),true)}${xlsCell(effectiveScore(it),true)}</tr>`;
   });
   const d=compute();
-  rows+=`<tr><td colspan="9"><b>Genel toplam</b></td>${xlsCell(d.totalOfficial,true)}${xlsCell(d.totalFor100,true)}</tr>`;
-  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><table border="1"><thead><tr><th>Çalışma</th><th>Dönem</th><th>Çalışma türü</th><th>Alt tür</th><th>Açıklama</th><th>Adet</th><th>Kişi</th><th>Paylaşım</th><th>Lisansüstü tez çalışması</th><th>Ham puan</th><th>Hesaba geçen puan</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
+  rows+=`<tr><td colspan="10"><b>Genel toplam</b></td>${xlsCell(d.totalOfficial,true)}${xlsCell(d.totalFor100,true)}</tr>`;
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><table border="1"><thead><tr><th>Çalışma</th><th>Dönem</th><th>Çalışma türü</th><th>Alt tür</th><th>Açıklama</th><th>Adet</th><th>Kişi</th><th>Paylaşım</th><th>Başlıca yazar</th><th>Lisansüstü tez çalışması</th><th>Ham puan</th><th>Hesaba geçen puan</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
   download(new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel;charset=utf-8'}),'docentlik-puan-listesi.xls');
 }
 function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();URL.revokeObjectURL(a.href);a.remove();}
