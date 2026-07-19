@@ -125,6 +125,15 @@ button{cursor:pointer}
   </aside>
 
   <main class="main">
+    <section class="notice-card">⚠️ <span>Sayfada hata olabilir, kontrol edin ve hataları bildirin 🙂</span></section>
+
+    <div id="yeniCalisma" class="quick-add-wrap">
+      <button type="button" class="quick-add-btn" onclick="addItem()" aria-label="Yeni çalışma ekle">
+        <span class="quick-add-icon" aria-hidden="true">＋</span>
+        <span>Yeni çalışma ekle</span>
+      </button>
+    </div>
+
     <div class="dashboard-title">Asgari başvuru şartları</div>
     <section id="ozet" class="kpis" aria-label="Puan ve şart özeti">
       <div class="kpi" id="k_total100"><b>0</b><span>Genel puan<em>Tez yayınları hariç · En az 100 · Üst sınır yok</em></span></div>
@@ -140,14 +149,6 @@ button{cursor:pointer}
     <div class="dashboard-title">Çalışma kategorileri ve üst sınırlar</div>
     <section id="categoryKpis" class="kpis category-kpis" aria-label="Kategori puanları ve üst sınırları"></section>
     <section id="topAlerts" class="top-alerts" aria-label="Hedefe kalan puanlar"></section>
-    <section class="notice-card">⚠️ <span>Sayfada hata olabilir, kontrol edin ve hataları bildirin 🙂</span></section>
-
-    <div id="yeniCalisma" class="quick-add-wrap">
-      <button type="button" class="quick-add-btn" onclick="addItem()" aria-label="Yeni çalışma ekle">
-        <span class="quick-add-icon" aria-hidden="true">＋</span>
-        <span>Yeni çalışma ekle</span>
-      </button>
-    </div>
 
     <section id="maddeler" class="section panel">
       <div class="section-head">
