@@ -57,6 +57,7 @@ button{cursor:pointer}
 @media print{.sidebar,.actions,.themebox,.addbar,.btn,.fixed-name{display:none!important}.app{display:block}.main{padding:0}.panel,.work-card,.kpi{box-shadow:none;border:1.5px solid #b9c1cc}body{background:#fff}.print-only{display:block}}
 /* Bölümler ve çalışma grupları için belirgin ayraçlar */
 .kpis{grid-template-columns:repeat(3,minmax(210px,1fr));gap:12px;margin-bottom:14px}.kpi{min-height:126px;padding:17px 16px;display:flex;flex-direction:column;justify-content:center}.kpi b{font-size:28px;margin-bottom:8px}.kpi span{font-size:12px;line-height:1.4}.kpi span em{display:block;margin-top:3px;font-style:normal;font-size:11px;color:var(--muted);font-weight:750}.top-alerts{grid-template-columns:repeat(3,minmax(220px,1fr));margin:0 0 20px}.top-alert{align-items:center;min-height:72px}.top-alert strong{font-size:14px}.top-alert span{font-size:12px}.top-alerts:empty{display:none}
+.dashboard-title{display:flex;align-items:center;gap:10px;margin:6px 0 12px;color:var(--ink);font-size:19px;font-weight:950}.dashboard-title:after{content:"";height:2px;flex:1;background:linear-gradient(90deg,var(--line-strong),transparent)}.category-kpis .kpi{min-height:142px}.category-kpis .kpi b{font-size:23px}.category-kpis .kpi small{position:relative;display:block;margin-top:7px;color:var(--muted);font-size:11px;font-weight:800;line-height:1.4}.category-kpis .kpi.over{border-color:#fca5a5;background:#fff7f7}.category-kpis .kpi.no-cap{border-color:color-mix(in srgb,var(--primary) 34%,var(--line-strong))}
 .main>.section{position:relative;margin-bottom:28px}
 .main>.section+.section:before{content:"";position:absolute;left:12px;right:12px;top:-16px;height:3px;border-radius:999px;background:linear-gradient(90deg,transparent,var(--line-strong) 9%,var(--primary) 50%,var(--line-strong) 91%,transparent);opacity:.9}
 .items{gap:30px}
@@ -96,7 +97,7 @@ button{cursor:pointer}
     </div>
     <nav class="nav">
       <a href="#yeniCalisma"><i>01</i>Yeni çalışma ekle</a>
-      <a href="#ustBilgi"><i>02</i>Genel özet</a>
+      <a href="#ozet"><i>02</i>Puan özeti</a>
       <a href="#maddeler"><i>03</i>Çalışmalar</a>
       <a href="#liste"><i>04</i>Liste</a>
       <a href="#yedek"><i>05</i>Veri işlemleri</a>
@@ -124,17 +125,20 @@ button{cursor:pointer}
   </aside>
 
   <main class="main">
+    <div class="dashboard-title">Asgari başvuru şartları</div>
     <section id="ozet" class="kpis" aria-label="Puan ve şart özeti">
-      <div class="kpi" id="k_total100"><b>0</b><span>Genel puan<em>Tez çalışmaları hariç · Hedef 100</em></span></div>
-      <div class="kpi" id="k_post"><b>0</b><span>Doktora sonrası puan<em>Hedef 90</em></span></div>
-      <div class="kpi" id="k_sci"><b>0</b><span>SCI/SSCI Q1–Q3 puanı<em>Doktora sonrası · Hedef 40</em></span></div>
-      <div class="kpi" id="k_tr"><b>0</b><span>TR Dizin puanı<em>Doktora sonrası · Hedef 10</em></span></div>
-      <div class="kpi" id="k_cite"><b>0</b><span>Atıf puanı<em>Hedef 5</em></span></div>
-      <div class="kpi" id="k_meet"><b>0</b><span>Bildiri puanı<em>Doktora sonrası · Hedef 5</em></span></div>
-      <div class="kpi" id="k_thesis"><b>0</b><span>Lisansüstü tez yayını<em>Hedef en az 1 yayın</em></span></div>
-      <div class="kpi" id="k_article"><b>0</b><span>Başlıca yazarlı Q1–Q3 makale<em>Doktora sonrası · Hedef en az 1</em></span></div>
-      <div class="kpi" id="k_teaching"><b>0</b><span>Eğitim-öğretim puanı<em>Doktora sonrası · Hedef 2</em></span></div>
+      <div class="kpi" id="k_total100"><b>0</b><span>Genel puan<em>Tez yayınları hariç · En az 100 · Üst sınır yok</em></span></div>
+      <div class="kpi" id="k_post"><b>0</b><span>Doktora sonrası puan<em>En az 90 · Üst sınır yok</em></span></div>
+      <div class="kpi" id="k_sci"><b>0</b><span>SCI/SSCI Q1–Q3 puanı<em>Doktora sonrası · En az 40 · Üst sınır yok</em></span></div>
+      <div class="kpi" id="k_tr"><b>0</b><span>TR Dizin puanı<em>Doktora sonrası · En az 10 · Üst sınır yok</em></span></div>
+      <div class="kpi" id="k_cite"><b>0</b><span>Atıf puanı<em>Doktora sonrası · En az 5 · En fazla 10</em></span></div>
+      <div class="kpi" id="k_meet"><b>0</b><span>Bildiri puanı<em>Doktora sonrası · En az 5 · En fazla 10</em></span></div>
+      <div class="kpi" id="k_thesis"><b>0</b><span>Lisansüstü tez yayını<em>En az 1 yayın · Puan üst sınırı 20</em></span></div>
+      <div class="kpi" id="k_article"><b>0</b><span>Başlıca yazarlı Q1–Q3 makale<em>Doktora sonrası · En az 1 · Üst sınır yok</em></span></div>
+      <div class="kpi" id="k_teaching"><b>0</b><span>Eğitim-öğretim puanı<em>Doktora sonrası · En az 2 · En fazla 6</em></span></div>
     </section>
+    <div class="dashboard-title">Çalışma kategorileri ve üst sınırlar</div>
+    <section id="categoryKpis" class="kpis category-kpis" aria-label="Kategori puanları ve üst sınırları"></section>
     <section id="topAlerts" class="top-alerts" aria-label="Hedefe kalan puanlar"></section>
     <section class="notice-card">⚠️ <span>Sayfada hata olabilir, kontrol edin ve hataları bildirin 🙂</span></section>
 
@@ -144,29 +148,6 @@ button{cursor:pointer}
         <span>Yeni çalışma ekle</span>
       </button>
     </div>
-
-    <section id="ustBilgi" class="section panel info-section open">
-      <div class="section-head" onclick="toggleInfo()">
-        <h3><span class="bubble">ⓘ</span>Üst Bilgi</h3>
-        <button type="button" class="limit-toggle" id="infoToggle" onclick="event.stopPropagation();toggleInfo()"><span class="chev">⌄</span><span id="infoToggleText">Kapat</span></button>
-      </div>
-      <div class="limit-content" id="infoContent"><div class="limit-content-inner">
-        <section class="split">
-          <div class="panel">
-            <div class="section-head"><h3><span class="bubble">✓</span>Şart Kontrolü</h3></div>
-            <div class="checks" id="checks"></div>
-          </div>
-          <div class="panel">
-            <div class="section-head"><h3><span class="bubble">Σ</span>Puan Özeti</h3></div>
-            <div class="summary" id="summary"></div>
-          </div>
-        </section>
-        <section class="panel" style="margin-top:16px">
-          <div class="section-head"><h3><span class="bubble">⌁</span>Kategori Üst Sınırları</h3></div>
-          <div class="limits-grid" id="limitsGrid"></div>
-        </section>
-      </div></div>
-    </section>
 
     <section id="maddeler" class="section panel">
       <div class="section-head">
@@ -672,6 +653,19 @@ function renderKpis(d){
   const ka=document.getElementById('k_article'); ka.className='kpi '+status(d.originalArticleCount,1); ka.querySelector('b').textContent=d.originalArticleCount;
   setKpi('k_teaching',d.teachingAfter,2);
 }
+function renderCategoryKpis(d){
+  const root=document.getElementById('categoryKpis');
+  if(!root) return;
+  const cards=Object.entries(TYPES).map(([key,t])=>{
+    const c=d.cats[key];
+    const limited=Math.abs(c.raw-c.capped)>0.004;
+    const capLine=t.cap==null?'Üst sınır yok':`En fazla ${fmt(t.cap)} puan`;
+    const special=key==='book'?' · Diğer kitap/bölüm birlikte en fazla 5,00':'';
+    const detail=limited?`Ham puan: ${fmt(c.raw)} · Sınır sonrası: ${fmt(c.capped)}`:`Hesaba geçen: ${fmt(c.capped)} puan`;
+    return `<div class="kpi ${limited?'over':''} ${t.cap==null?'no-cap':''}"><b>${fmt(c.capped)}</b><span>${t.icon} ${esc(t.name)}<em>${capLine}${special}</em></span><small>${detail}</small></div>`;
+  });
+  root.innerHTML=cards.join('');
+}
 function requirementItems(d){
   return [
     ['En az 100 puan',d.totalFor100,100,'Lisansüstü tez çalışması puanı hariç hesap.','puan'],
@@ -753,7 +747,7 @@ function renderList(){
     ['Genel toplam',d.totalOfficial],['100 puan hesabı',d.totalFor100],['Dr sonrası',d.post],['Dr öncesi',d.pre]
   ].map(r=>`<div class="sumrow"><span>${r[0]}</span><b>${fmt(r[1])}</b></div>`).join('');
 }
-function renderAll(){applyPalette();renderTheme();renderItems();const d=compute();renderKpis(d);renderTopAlerts(d);renderChecks(d);renderSummary(d);renderLimits(d);renderList();if(lastAddedId){const id=lastAddedId;setTimeout(()=>{const el=document.getElementById('item_'+id);if(el)el.classList.remove('just-added');if(lastAddedId===id)lastAddedId=null;},1100);}}
+function renderAll(){applyPalette();renderTheme();renderItems();const d=compute();renderKpis(d);renderCategoryKpis(d);renderTopAlerts(d);renderList();if(lastAddedId){const id=lastAddedId;setTimeout(()=>{const el=document.getElementById('item_'+id);if(el)el.classList.remove('just-added');if(lastAddedId===id)lastAddedId=null;},1100);}}
 function exportJson(){
   save('');
   const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json;charset=utf-8'});
