@@ -665,13 +665,13 @@ function status(value,target){return value>=target?'ok':(value>=target*.65?'warn
 function setKpi(id,value,target,limitText='Üst sınır yok',rawValue=value){
   const el=document.getElementById(id); if(!el) return;
   el.className='kpi '+status(value,target);
-  el.querySelector('b').textContent=`${fmt(value)} puan`;
+  el.querySelector('b').textContent=`${fmt(value)} / ${fmt(target)} puan`;
   const remain=Math.max(0,target-value);
   const em=el.querySelector('em');
   if(em){
     em.className='kpi-meta';
     const rawLine=Math.abs(rawValue-value)>0.004?`Ham puan: ${fmt(rawValue)} · Hesaba geçen: ${fmt(value)} puan`:`Hesaba geçen puan: ${fmt(value)}`;
-    em.innerHTML=`<i class="earned">${rawLine}</i><i class="minimum">Alt sınır: En az ${fmt(target)} puan</i><i class="maximum">Üst sınır: ${limitText}</i><i class="remaining">${remain>0?`Hedefe ${fmt(remain)} puan kaldı`:'Hedef tamamlandı'}</i>`;
+    em.innerHTML=`<i class="earned">${rawLine}</i><i class="maximum">Üst sınır: ${limitText}</i><i class="remaining">${remain>0?`Hedefe ${fmt(remain)} puan kaldı`:'Hedef tamamlandı'}</i>`;
   }
 }
 function setCountKpi(id,value,target,unit,limitText){
@@ -685,13 +685,13 @@ function setCountKpi(id,value,target,unit,limitText){
 function setPointsWithCountTargetKpi(id,points,count,target,unit,limitText,rawPoints=points){
   const el=document.getElementById(id); if(!el) return;
   el.className='kpi '+status(count,target);
-  el.querySelector('b').textContent=`${fmt(points)} puan`;
+  el.querySelector('b').textContent=`${fmt(points)} puan · ${Math.round(count)} / ${target} ${unit}`;
   const remain=Math.max(0,Math.ceil(target-count));
   const em=el.querySelector('em');
   if(em){
     em.className='kpi-meta';
     const rawLine=Math.abs(rawPoints-points)>0.004?`Ham puan: ${fmt(rawPoints)} · Hesaba geçen: ${fmt(points)} puan`:`Hesaba geçen puan: ${fmt(points)}`;
-    em.innerHTML=`<i class="earned">${rawLine}</i><i class="minimum">Alt şart: En az ${target} ${unit}</i><i class="maximum">Üst sınır: ${limitText}</i><i class="remaining">${remain>0?`Mevcut ${Math.round(count)} ${unit} · ${remain} ${unit} daha gerekli`:`Adet şartı tamamlandı · Mevcut ${Math.round(count)} ${unit}`}</i>`;
+    em.innerHTML=`<i class="earned">${rawLine}</i><i class="maximum">Üst sınır: ${limitText}</i><i class="remaining">${remain>0?`Mevcut ${Math.round(count)} ${unit} · ${remain} ${unit} daha gerekli`:`Adet şartı tamamlandı · Mevcut ${Math.round(count)} ${unit}`}</i>`;
   }
 }
 function setNationalArticleKpi(d){
