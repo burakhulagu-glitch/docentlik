@@ -65,6 +65,17 @@ button{cursor:pointer}
 .work-head{border-radius:19px 19px 0 0}
 .work-card.collapsed .work-head{border-radius:19px}
 .section.works-empty .addbar{display:flex}
+.quick-add-wrap{display:flex;justify-content:center;margin:0 0 28px;position:relative}
+.quick-add-btn{position:relative;isolation:isolate;overflow:hidden;min-width:min(100%,430px);border:0;border-radius:19px;padding:16px 28px;background:linear-gradient(120deg,var(--primary2),var(--primary),var(--accent),var(--primary2));background-size:260% 260%;color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:13px;font-size:16px;font-weight:950;letter-spacing:.01em;cursor:pointer;box-shadow:0 14px 32px color-mix(in srgb,var(--primary) 28%,transparent),inset 0 1px 0 rgba(255,255,255,.3);animation:quickAddGradient 5s ease infinite,quickAddFloat 2.8s ease-in-out infinite;transition:transform .22s ease,box-shadow .22s ease}
+.quick-add-btn:before{content:"";position:absolute;inset:-3px;z-index:-1;border-radius:22px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:translateX(-120%) skewX(-18deg);animation:quickAddShine 3.2s ease-in-out infinite}
+.quick-add-btn:hover{transform:translateY(-3px) scale(1.015);box-shadow:0 20px 42px color-mix(in srgb,var(--primary) 36%,transparent),inset 0 1px 0 rgba(255,255,255,.38)}
+.quick-add-btn:active{transform:translateY(0) scale(.985)}
+.quick-add-icon{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.42);font-size:25px;line-height:1;animation:quickAddPlus 2.8s ease-in-out infinite}
+@keyframes quickAddGradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes quickAddFloat{0%,100%{translate:0 0}50%{translate:0 -3px}}
+@keyframes quickAddShine{0%,55%{transform:translateX(-130%) skewX(-18deg)}85%,100%{transform:translateX(130%) skewX(-18deg)}}
+@keyframes quickAddPlus{0%,72%,100%{transform:rotate(0deg) scale(1)}82%{transform:rotate(90deg) scale(1.1)}}
+@media(prefers-reduced-motion:reduce){.quick-add-btn,.quick-add-btn:before,.quick-add-icon{animation:none}}
 </style>
 </head>
 <body>
@@ -123,16 +134,12 @@ button{cursor:pointer}
     <section id="topAlerts" class="top-alerts" aria-label="Hedefe kalan puanlar"></section>
     <section class="notice-card">⚠️ <span>Sayfada hata olabilir, kontrol edin ve hataları bildirin 🙂</span></section>
 
-    <section id="yeniCalisma" class="section panel">
-      <div class="section-head">
-        <div><h3><span class="bubble">＋</span>Yeni çalışma ekle</h3><div class="muted">Makale, bildiri, atıf, proje, patent ve diğer akademik çalışmalarını kaydet.</div></div>
-      </div>
-      <div class="addbar" style="margin-top:0">
-        <button type="button" class="plus" onclick="addItem()" aria-label="Yeni çalışma ekle">+</button>
-        <div><strong>Çalışma kaydı oluştur</strong><p>Yeni kayıt listenin sonuna eklenir ve düzenleme alanı otomatik olarak açılır.</p></div>
-        <button type="button" class="btn primary" onclick="addItem()">Yeni çalışma ekle</button>
-      </div>
-    </section>
+    <div id="yeniCalisma" class="quick-add-wrap">
+      <button type="button" class="quick-add-btn" onclick="addItem()" aria-label="Yeni çalışma ekle">
+        <span class="quick-add-icon" aria-hidden="true">＋</span>
+        <span>Yeni çalışma ekle</span>
+      </button>
+    </div>
 
     <section id="ustBilgi" class="section panel info-section open">
       <div class="section-head" onclick="toggleInfo()">
