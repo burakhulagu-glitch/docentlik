@@ -263,7 +263,14 @@ function isOriginalArticleRequirement(item){
 }
 function scrollToSummary(){window.scrollTo({top:0,behavior:'smooth'});}
 function scrollToWorks(){document.getElementById('maddeler')?.scrollIntoView({behavior:'smooth',block:'start'});}
-function editItem(id){focusItem(id)}
+function editItem(id){
+  const selected=state.items.find(x=>x.id===id);
+  if(!selected) return;
+  state.items.forEach(x=>{x.expanded=x.id===id});
+  save('');
+  renderAll();
+  focusItem(id);
+}
 function focusItem(id){
   const run=()=>{
     const el=document.getElementById('item_'+id);
@@ -645,7 +652,7 @@ function status(value,target){return value>=target?'ok':(value>=target*.65?'warn
 function setKpi(id,value,target,limitText='Üst sınır yok'){
   const el=document.getElementById(id); if(!el) return;
   el.className='kpi '+status(value,target);
-  el.querySelector('b').textContent=fmt(value);
+  el.querySelector('b').textContent=`${fmt(value)} puan`;
   const remain=Math.max(0,target-value);
   const em=el.querySelector('em');
   if(em) em.textContent=(remain>0?`Hedefe ${fmt(remain)} puan kaldı`:'Hedef tamamlandı')+` · ${limitText}`;
@@ -653,7 +660,7 @@ function setKpi(id,value,target,limitText='Üst sınır yok'){
 function setCountKpi(id,value,target,unit,limitText){
   const el=document.getElementById(id); if(!el) return;
   el.className='kpi '+status(value,target);
-  el.querySelector('b').textContent=Math.round(value);
+  el.querySelector('b').textContent=`${Math.round(value)} ${unit}`;
   const remain=Math.max(0,Math.ceil(target-value));
   const em=el.querySelector('em');
   if(em) em.textContent=(remain>0?`Hedefe ${remain} ${unit} kaldı`:'Hedef tamamlandı')+` · ${limitText}`;
