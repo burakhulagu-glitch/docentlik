@@ -359,6 +359,11 @@ function formula(item){
 }
 
 function isWorkComplete(item){return !!(item && item.type && item.subtype && score(item)>0)}
+function workDisplayTitle(item){
+  const typeName=def(item.type)?.name||'Çalışma türü seçilmedi';
+  const note=String(item.note||'').trim();
+  return note?`${typeName} - (${note})`:typeName;
+}
 function addConfettiBurst(id){
   const run=()=>{
     const el=document.getElementById('item_'+id);
@@ -504,6 +509,8 @@ function updateItem(id,key,value){
   if(key==='note'){
     it.note=value;
     save('');
+    const label=document.getElementById('workLabel_'+id);
+    if(label) label.textContent=workDisplayTitle(it);
     renderList();
     return;
   }
@@ -606,11 +613,11 @@ function renderItem(it,idx){
   const added=lastAddedId===it.id;
   return `<div class="work-card ${collapsed?'collapsed':''} ${added?'just-added':''}" id="item_${it.id}">
     <div class="work-head" onclick="if(!event.target.closest('button')) toggleItem('${it.id}')">
-      <div class="work-title">${d?`<div class="work-icon">${d.icon}</div>`:`<button type="button" class="work-icon add-trigger" onclick="event.stopPropagation();addItem()" aria-label="Yeni çalışma ekle">＋</button>`}<div><b>Çalışma ${String(idx+1).padStart(2,'0')}</b><span>${d?esc(d.name):'Çalışma türü seçilmedi'}</span></div></div>
+      <div class="work-title">${d?`<div class="work-icon">${d.icon}</div>`:`<button type="button" class="work-icon add-trigger" onclick="event.stopPropagation();addItem()" aria-label="Yeni çalışma ekle">＋</button>`}<div><b id="workLabel_${it.id}">${esc(workDisplayTitle(it))}</b><span>${it.period==='after'?'Doktora sonrası':'Doktora öncesi'}${st?` · ${esc(st[1])}`:''}</span></div></div>
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end"><div class="work-score"><b>${fmt(effectiveScore(it))}</b><span>hesaba geçen puan</span>${isCapped(it)?`<small>Ham puan: ${fmt(score(it))}</small>`:''}</div><button type="button" class="collapse-btn" onclick="toggleItem('${it.id}')">${collapsed?'Aç':'Kapat'}</button><button type="button" class="btn red edit-btn" onclick="deleteItem('${it.id}')">Sil</button></div>
     </div>
-    <div class="work-note-editor"><label>Çalışma açıklaması</label><textarea placeholder="Örn. makale adı, dergi, yıl, DOI veya kısa not" oninput="updateItem('${it.id}','note',this.value)">${esc(it.note||'')}</textarea></div>
     ${!collapsed?`<div class="work-body">
+      <div class="work-note-editor" style="padding:0 0 14px;border-bottom:0"><label>Çalışma açıklaması</label><textarea placeholder="Örn. makale adı, dergi, yıl, DOI veya kısa not" oninput="updateItem('${it.id}','note',this.value)">${esc(it.note||'')}</textarea></div>
       <div class="formrow">
         <div class="field c4"><label>1. Çalışma türü</label>${selectHtml(typeOpts,it.type,`onchange="updateItem('${it.id}','type',this.value)"`)}</div>
         ${d?`
@@ -738,7 +745,7 @@ function renderList(){
       if(!group.length) continue;
       const groupTotal=group.reduce((a,x)=>a+effectiveScore(x),0);
       rows+=`<tr class="list-type-row"><td colspan="8">${esc(typeDef.name)} · ${fmt(groupTotal)} puan</td></tr>`;
-      rows+=group.map(it=>`<tr><td>Çalışma ${it.idx+1}${it.note?`<span class="work-note">${esc(it.note)}</span>`:''}</td><td><span class="pill">${periodLabel(it.period)}</span>${isThesisProduced(it)?'<br><span class="pill">Lisansüstü tez çalışması</span>':''}</td><td>${esc(def(it.type)?.name)}</td><td>${esc(subtype(it.type,it.subtype)?.[1])}</td><td class="note-cell">${it.note?esc(it.note):'—'}</td><td>${formula(it)}${isCapped(it)?`<br><span class="raw-score">Ham: ${fmt(score(it))} · Limit sonrası: ${fmt(effectiveScore(it))}</span>`:''}</td><td><b>${fmt(effectiveScore(it))}</b></td><td><button class="btn edit-btn" onclick="editItem('${it.id}')">Düzenle</button></td></tr>`).join('');
+      rows+=group.map(it=>`<tr><td><b>${esc(workDisplayTitle(it))}</b></td><td><span class="pill">${periodLabel(it.period)}</span>${isThesisProduced(it)?'<br><span class="pill">Lisansüstü tez çalışması</span>':''}</td><td>${esc(def(it.type)?.name)}</td><td>${esc(subtype(it.type,it.subtype)?.[1])}</td><td class="note-cell">${it.note?esc(it.note):'—'}</td><td>${formula(it)}${isCapped(it)?`<br><span class="raw-score">Ham: ${fmt(score(it))} · Limit sonrası: ${fmt(effectiveScore(it))}</span>`:''}</td><td><b>${fmt(effectiveScore(it))}</b></td><td><button class="btn edit-btn" onclick="editItem('${it.id}')">Düzenle</button></td></tr>`).join('');
     }
   }
   body.innerHTML=rows;
@@ -766,7 +773,7 @@ function exportCsv(){
   const valid=state.items.map((it,idx)=>({...it,idx})).filter(x=>x.type);
   let rows='';
   valid.forEach(it=>{
-    rows+=`<tr>${xlsCell(it.idx+1,true)}${xlsCell(periodLabel(it.period))}${xlsCell(def(it.type)?.name)}${xlsCell(subtype(it.type,it.subtype)?.[1])}${xlsCell(it.note||'')}${xlsCell(Number(it.qty)||1,true)}${xlsCell(Number(it.people)||1,true)}${xlsCell(allowedShareOptions(it).find(s=>s[0]===it.share)?.[1]||'')}${xlsCell(isArticleType(it.type)?mainAuthorLabel(it):'')}${xlsCell(isThesisProduced(it)?'Evet':'Hayır')}${xlsCell(score(it),true)}${xlsCell(effectiveScore(it),true)}</tr>`;
+    rows+=`<tr>${xlsCell(workDisplayTitle(it))}${xlsCell(periodLabel(it.period))}${xlsCell(def(it.type)?.name)}${xlsCell(subtype(it.type,it.subtype)?.[1])}${xlsCell(it.note||'')}${xlsCell(Number(it.qty)||1,true)}${xlsCell(Number(it.people)||1,true)}${xlsCell(allowedShareOptions(it).find(s=>s[0]===it.share)?.[1]||'')}${xlsCell(isArticleType(it.type)?mainAuthorLabel(it):'')}${xlsCell(isThesisProduced(it)?'Evet':'Hayır')}${xlsCell(score(it),true)}${xlsCell(effectiveScore(it),true)}</tr>`;
   });
   const d=compute();
   rows+=`<tr><td colspan="10"><b>Genel toplam</b></td>${xlsCell(d.totalOfficial,true)}${xlsCell(d.totalFor100,true)}</tr>`;
