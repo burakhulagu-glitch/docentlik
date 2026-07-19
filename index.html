@@ -71,6 +71,8 @@ button{cursor:pointer}
 .quick-add-btn:hover{transform:translateY(-3px) scale(1.015);box-shadow:0 20px 42px color-mix(in srgb,var(--primary) 36%,transparent),inset 0 1px 0 rgba(255,255,255,.38)}
 .quick-add-btn:active{transform:translateY(0) scale(.985)}
 .quick-add-icon{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.42);font-size:25px;line-height:1;animation:quickAddPlus 2.8s ease-in-out infinite}
+.quick-add-wrap.bottom-add{margin:22px 0 8px}.quick-add-wrap.bottom-add .quick-add-btn{min-width:min(100%,360px);padding:13px 22px;font-size:14px}
+.bubble.add-trigger{cursor:pointer;font:inherit;font-size:18px;transition:transform .2s ease,background .2s ease}.bubble.add-trigger:hover{transform:rotate(90deg) scale(1.08);background:var(--primary);color:#fff}.work-icon.add-trigger{border:0;cursor:pointer}.work-icon.add-trigger:hover{transform:scale(1.08) rotate(90deg)}
 @keyframes quickAddGradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 @keyframes quickAddFloat{0%,100%{translate:0 0}50%{translate:0 -3px}}
 @keyframes quickAddShine{0%,55%{transform:translateX(-130%) skewX(-18deg)}85%,100%{transform:translateX(130%) skewX(-18deg)}}
@@ -162,9 +164,14 @@ button{cursor:pointer}
 
     <section id="maddeler" class="section panel">
       <div class="section-head">
-        <div><h3><span class="bubble">＋</span>Çalışmalar</h3><div class="muted">Her çalışma ayrı bir kayıt olarak eklenir.</div></div>
+        <div><h3><button type="button" class="bubble add-trigger" onclick="addItem()" aria-label="Yeni çalışma ekle">＋</button>Çalışmalar</h3><div class="muted">Her çalışma ayrı bir kayıt olarak eklenir.</div></div>
       </div>
       <div class="items" id="items"></div>
+      <div class="quick-add-wrap bottom-add">
+        <button type="button" class="quick-add-btn" onclick="addItem()" aria-label="Yeni çalışma ekle">
+          <span class="quick-add-icon" aria-hidden="true">＋</span><span>Yeni çalışma ekle</span>
+        </button>
+      </div>
       <div class="list-actions"><button type="button" class="btn primary" onclick="scrollToSummary()">Tüm özeti gör</button></div>
     </section>
 
@@ -268,7 +275,7 @@ function isOriginalArticleRequirement(item){
   if(item.subtype==='minor' || item.subtype==='nat_minor') return false;
   return item.main==='sole' || item.main==='grad';
 }
-function scrollToSummary(){document.getElementById('ustBilgi')?.scrollIntoView({behavior:'smooth',block:'start'});}
+function scrollToSummary(){window.scrollTo({top:0,behavior:'smooth'});}
 function scrollToWorks(){document.getElementById('maddeler')?.scrollIntoView({behavior:'smooth',block:'start'});}
 function editItem(id){focusItem(id)}
 function focusItem(id){
@@ -578,7 +585,7 @@ function renderItem(it,idx){
   const added=lastAddedId===it.id;
   return `<div class="work-card ${collapsed?'collapsed':''} ${added?'just-added':''}" id="item_${it.id}">
     <div class="work-head" onclick="if(!event.target.closest('button')) toggleItem('${it.id}')">
-      <div class="work-title"><div class="work-icon">${d?.icon||'＋'}</div><div><b>Çalışma ${String(idx+1).padStart(2,'0')}</b><span>${d?esc(d.name):'Çalışma türü seçilmedi'}</span></div></div>
+      <div class="work-title">${d?`<div class="work-icon">${d.icon}</div>`:`<button type="button" class="work-icon add-trigger" onclick="event.stopPropagation();addItem()" aria-label="Yeni çalışma ekle">＋</button>`}<div><b>Çalışma ${String(idx+1).padStart(2,'0')}</b><span>${d?esc(d.name):'Çalışma türü seçilmedi'}</span></div></div>
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end"><div class="work-score"><b>${fmt(effectiveScore(it))}</b><span>hesaba geçen puan</span>${isCapped(it)?`<small>Ham puan: ${fmt(score(it))}</small>`:''}</div><button type="button" class="collapse-btn" onclick="toggleItem('${it.id}')">${collapsed?'Aç':'Kapat'}</button><button type="button" class="btn red edit-btn" onclick="deleteItem('${it.id}')">Sil</button></div>
     </div>
     <div class="work-note-editor"><label>Çalışma açıklaması</label><textarea placeholder="Örn. makale adı, dergi, yıl, DOI veya kısa not" oninput="updateItem('${it.id}','note',this.value)">${esc(it.note||'')}</textarea></div>
