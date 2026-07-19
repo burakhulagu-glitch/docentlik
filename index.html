@@ -136,14 +136,14 @@ button{cursor:pointer}
 
     <div class="dashboard-title">Asgari başvuru şartları</div>
     <section id="ozet" class="kpis" aria-label="Puan ve şart özeti">
-      <div class="kpi" id="k_total100"><b>0</b><span>Genel puan<em>Tez yayınları dahil · En az 100 · Üst sınır yok</em></span></div>
+      <div class="kpi" id="k_total100"><b>0</b><span>Genel puan<em>Tez yayınları hariç · En az 100 · Üst sınır yok</em></span></div>
       <div class="kpi" id="k_post"><b>0</b><span>Doktora sonrası puan<em>En az 90 · Üst sınır yok</em></span></div>
-      <div class="kpi" id="k_sci"><b>0</b><span>SCIE/SSCI makale puanı<em>Doktora sonrası · 1(a) bendinden en az 40 puan</em></span></div>
-      <div class="kpi" id="k_tr"><b>0</b><span>Ulusal makale puanı<em>Doktora sonrası · En az 3 yayın; 2'si TR Dizin ve 2'si başlıca yazarlı</em></span></div>
+      <div class="kpi" id="k_sci"><b>0</b><span>SCIE/SSCI Q1–Q3 puanı<em>Doktora sonrası · En az 40 puan · Q4 dahil değil</em></span></div>
+      <div class="kpi" id="k_tr"><b>0</b><span>TR Dizin puanı<em>Doktora sonrası · En az 10 puan · Üst sınır yok</em></span></div>
       <div class="kpi" id="k_cite"><b>0</b><span>Atıf puanı<em>Doktora sonrası · En az 5 · En fazla 10</em></span></div>
       <div class="kpi" id="k_meet"><b>0</b><span>Bildiri puanı<em>Doktora sonrası · En az 5 · En fazla 10</em></span></div>
       <div class="kpi" id="k_thesis"><b>0</b><span>Lisansüstü tez yayını<em>En az 1 yayın · Puan üst sınırı 20</em></span></div>
-      <div class="kpi" id="k_article"><b>0</b><span>Başlıca yazarlı SCIE/SSCI makale<em>Doktora sonrası · 1(a) bendinden en az 3 makale</em></span></div>
+      <div class="kpi" id="k_article"><b>0</b><span>Başlıca yazarlı Q1–Q3 özgün makale<em>Doktora sonrası · En az 1 · Kendin veya lisansüstü öğrencin ile</em></span></div>
       <div class="kpi" id="k_teaching"><b>0</b><span>Eğitim-öğretim puanı<em>Doktora sonrası · En az 2 · En fazla 6</em></span></div>
     </section>
 
@@ -174,7 +174,7 @@ const STORAGE_KEY='docentlik_modern_secimli_v7';
 const DEFAULT_ACCENT='#2563eb';
 const TYPES={
   international_article:{name:'Makale - Uluslararası',icon:'📄',cap:null,defaultShare:'equal',items:[
-    ['sci_q1','SCIE/SSCI Q1 makale',30,['sci','sci40']],['sci_q2','SCIE/SSCI Q2 makale',20,['sci','sci40']],['sci_q3','SCIE/SSCI Q3 makale',15,['sci','sci40']],['sci_q4','SCIE/SSCI Q4 makale',10,['sci','sci40']],
+    ['sci_q1','SCIE/SSCI Q1 makale',30,['sci','sci40']],['sci_q2','SCIE/SSCI Q2 makale',20,['sci','sci40']],['sci_q3','SCIE/SSCI Q3 makale',15,['sci','sci40']],['sci_q4','SCIE/SSCI Q4 makale (40 puan şartına dahil değil)',10,['sci']],
     ['ahci','AHCI kapsamındaki dergide yayımlanmış makale',20,['ahci']],['esci_scopus','ESCI veya Scopus kapsamındaki dergide yayımlanmış makale',10,['esci','scopus']],['other_int_index','Diğer uluslararası indekslerde taranan dergide yayımlanmış makale',5,['otherIndex']],['minor','Editöre mektup / araştırma notu / özet / kitap kritiği',3,['minor']],['case_report','SCIE/SSCI dergide yayımlanmış vak’a takdimi',5,['caseReport']]
   ]},
   national_article:{name:'Makale - Ulusal',icon:'📰',cap:null,defaultShare:'equal',items:[
@@ -193,7 +193,7 @@ const TYPES={
   book:{name:'Kitap / Kitap Bölümü',icon:'📚',cap:20,defaultShare:'equal',items:[
     ['bkci_book','BKCI kapsamındaki kitap',20,['book']],['bkci_chapter','BKCI kitap bölümü',10,['chapter']],['other_book','Diğer uluslararası/ulusal kitap',5,['book']],['other_chapter','Diğer kitap bölümü',3,['chapter']]
   ]},
-  project:{name:'Bilimsel Araştırma Projesi',icon:'🧪',cap:20,defaultShare:'full',items:[
+  project:{name:'Bilimsel Araştırma Projesi',icon:'🧪',cap:30,defaultShare:'full',items:[
     ['eu_coord','Başarıyla tamamlanmış AB/TÜBİTAK projesi (öğrenci projesi hariç) — koordinatör/yürütücü',15,['project']],['eu_researcher','Başarıyla tamamlanmış AB/TÜBİTAK projesi (öğrenci projesi hariç) — araştırmacı',10,['project']],['eu_advisor','Başarıyla tamamlanmış AB/TÜBİTAK projesi (öğrenci projesi hariç) — danışman',5,['project']],['international_completed','Başarıyla tamamlanmış uluslararası destekli proje (derleme/rapor hariç) — yürütücü/araştırmacı/danışman',10,['project']],['national_exec','Başarıyla tamamlanmış kamu/özel kuruluş Ar-Ge/Ür-Ge projesi — yürütücü/araştırmacı/danışman',5,['project']],['bap','Başarıyla tamamlanmış BAP projesi (tez/uzmanlık projesi hariç) — yürütücü',3,['project']]
   ]},
   patent:{name:'Patent / Faydalı Model',icon:'💡',cap:null,defaultShare:'equal',items:[
@@ -259,7 +259,7 @@ function normalizeState(){
 function isArticleType(type){return type==='international_article'||type==='national_article'}
 function isThesisProduced(item){return item.type==='thesis_publication'}
 function isOriginalArticleRequirement(item){
-  return item.type==='international_article' && item.period==='after' && ['sci_q1','sci_q2','sci_q3','sci_q4'].includes(item.subtype) && ['sole','first','grad'].includes(item.main);
+  return item.type==='international_article' && item.period==='after' && ['sci_q1','sci_q2','sci_q3'].includes(item.subtype) && (item.main==='sole' || item.main==='grad');
 }
 function scrollToSummary(){window.scrollTo({top:0,behavior:'smooth'});}
 function scrollToWorks(){document.getElementById('maddeler')?.scrollIntoView({behavior:'smooth',block:'start'});}
@@ -645,7 +645,7 @@ function compute(){
   const totalOfficial=Object.values(cats).reduce((a,c)=>a+c.capped,0);
   const thesisMarked=state.items.filter(isThesisProduced).reduce((a,it)=>a+effectiveScore(it),0);
   const thesis=thesisMarked;
-  const totalFor100=totalOfficial;
+  const totalFor100=Math.max(0,totalOfficial-thesis);
   const post=Object.entries(cats).filter(([key])=>key!=='thesis_publication').reduce((a,[_,c])=>a+c.after,0);
   const pre=Object.entries(cats).filter(([key])=>key!=='thesis_publication').reduce((a,[_,c])=>a+c.before,0);
   const citation=citationAfter;
@@ -698,11 +698,11 @@ function renderKpis(d){
   setKpi('k_total100',d.totalFor100,100,'Üst sınır yok');
   setKpi('k_post',d.post,90,'Üst sınır yok');
   setKpi('k_sci',d.sci40,40,'Üst sınır yok');
-  setNationalArticleKpi(d);
+  setKpi('k_tr',d.trAfter,10,'Üst sınır yok');
   setKpi('k_cite',d.citation,5,'En fazla 10 puan');
   setKpi('k_meet',d.meetingAfter,5,'En fazla 10 puan');
   setPointsWithCountTargetKpi('k_thesis',d.thesis,d.thesisCount,1,'yayın','En fazla 20 puan');
-  setPointsWithCountTargetKpi('k_article',d.originalArticleScore,d.originalArticleCount,3,'makale','Üst sınır yok');
+  setPointsWithCountTargetKpi('k_article',d.originalArticleScore,d.originalArticleCount,1,'makale','Üst sınır yok');
   setKpi('k_teaching',d.teachingAfter,2,'En fazla 6 puan');
 }
 function renderCategoryKpis(d){
@@ -720,16 +720,14 @@ function renderCategoryKpis(d){
 }
 function requirementItems(d){
   return [
-    ['En az 100 puan',d.totalFor100,100,'Tüm uygun faaliyetlerin toplamı; lisansüstü tez yayını puanı bu toplama dahildir.','puan'],
+    ['En az 100 puan',d.totalFor100,100,'Lisansüstü tezlerden üretilmiş yayın puanı hariç hesap.','puan'],
     ['En az 90 puan Dr sonrası',d.post,90,'Doktora sonrası faaliyet toplamı.','puan'],
-    ['En az 40 puan SCIE/SSCI',d.sci40,40,'Dr sonrası 1(a) bendindeki Q1-Q4 makale puanı.','puan'],
-    ['En az 3 ulusal yayın',d.nationalPublicationCount,3,'Dr sonrasında ulusal makale başlığında en az üç yayın.','adet'],
-    ['En az 2 TR Dizin yayını',d.nationalTrCount,2,'Üç ulusal yayının en az ikisi TR Dizin kapsamında olmalıdır.','adet'],
-    ['En az 2 başlıca yazarlı ulusal yayın',d.nationalMainCount,2,'Ulusal yayınların en az ikisinde başlıca yazar olunmalıdır.','adet'],
+    ['En az 40 puan SCIE/SSCI Q1-Q3',d.sci40,40,'Dr sonrası Q1-Q3 makale puanı; Q4 bu şarta dahil değildir.','puan'],
+    ['En az 10 puan TR Dizin',d.trAfter,10,'Dr sonrası TR Dizin makale puanı.','puan'],
     ['En az 5 puan atıf',d.citation,5,'Atıf kategorisindeki toplam puan.','puan'],
     ['En az 5 puan bildiri',d.meetingAfter,5,'Dr sonrası bildiri puanı.','puan'],
     ['En az 1 lisansüstü tez yayını',d.thesisCount,1,'Lisansüstü tezden üretilmiş yayın başlığında en az bir çalışma.','adet'],
-    ['En az 3 başlıca yazarlı SCIE/SSCI makale',d.originalArticleCount,3,'Dr sonrasında 1(a) bendindeki Q1-Q4 makalelerin en az üçünde başlıca yazar olunmalıdır.','adet'],
+    ['En az 1 başlıca yazarlı Q1-Q3 özgün makale',d.originalArticleCount,1,'Dr sonrasında tek yazarlı veya danışmanlığındaki lisansüstü öğrenci(ler) ile Q1-Q3 özgün makale.','adet'],
     ['En az 2 puan eğitim-öğretim',d.teachingAfter,2,'Doktora sonrasındaki eğitim-öğretim faaliyetleri.','puan']
   ];
 }
@@ -767,7 +765,7 @@ function renderChecks(d){
 }
 function renderSummary(d){
   const rows=[
-    ['Genel toplam',d.totalOfficial],['100 puan hesabı',d.totalFor100],['Dr sonrası toplam',d.post],['Dr öncesi toplam',d.pre],['Tez yayınları',d.thesis],['SCIE/SSCI 1(a)',d.sci40],['Ulusal makale',d.nationalArticleScore],['Atıf',d.citation],['Bildiri Dr sonrası',d.meetingAfter]
+    ['Genel toplam',d.totalOfficial],['100 puan hesabı',d.totalFor100],['Dr sonrası toplam',d.post],['Dr öncesi toplam',d.pre],['Tez yayınları',d.thesis],['SCIE/SSCI Q1-Q3',d.sci40],['TR Dizin',d.trAfter],['Atıf',d.citation],['Bildiri Dr sonrası',d.meetingAfter]
   ];
   document.getElementById('summary').innerHTML=rows.map(r=>`<div class="sumrow"><span>${r[0]}</span><b>${fmt(r[1])}</b></div>`).join('');
 }
