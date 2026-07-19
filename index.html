@@ -146,9 +146,6 @@ button{cursor:pointer}
       <div class="kpi" id="k_article"><b>0</b><span>Başlıca yazarlı Q1–Q3 makale<em>Doktora sonrası · En az 1 · Üst sınır yok</em></span></div>
       <div class="kpi" id="k_teaching"><b>0</b><span>Eğitim-öğretim puanı<em>Doktora sonrası · En az 2 · En fazla 6</em></span></div>
     </section>
-    <div class="dashboard-title">Çalışma kategorileri ve üst sınırlar</div>
-    <section id="categoryKpis" class="kpis category-kpis" aria-label="Kategori puanları ve üst sınırları"></section>
-    <section id="topAlerts" class="top-alerts" aria-label="Hedefe kalan puanlar"></section>
 
     <section id="maddeler" class="section panel">
       <div class="section-head">
@@ -645,14 +642,32 @@ function compute(){
   return {cats,totalOfficial,thesis,totalFor100,post,pre,sci40,trAfter,citation,meetingAfter,thesisCount,originalArticleCount,teachingAfter};
 }
 function status(value,target){return value>=target?'ok':(value>=target*.65?'warn':'bad')}
-function setKpi(id,value,target){
-  const el=document.getElementById(id); el.className='kpi '+status(value,target); el.querySelector('b').textContent=fmt(value);
+function setKpi(id,value,target,limitText='Üst sınır yok'){
+  const el=document.getElementById(id); if(!el) return;
+  el.className='kpi '+status(value,target);
+  el.querySelector('b').textContent=fmt(value);
+  const remain=Math.max(0,target-value);
+  const em=el.querySelector('em');
+  if(em) em.textContent=(remain>0?`Hedefe ${fmt(remain)} puan kaldı`:'Hedef tamamlandı')+` · ${limitText}`;
+}
+function setCountKpi(id,value,target,unit,limitText){
+  const el=document.getElementById(id); if(!el) return;
+  el.className='kpi '+status(value,target);
+  el.querySelector('b').textContent=Math.round(value);
+  const remain=Math.max(0,Math.ceil(target-value));
+  const em=el.querySelector('em');
+  if(em) em.textContent=(remain>0?`Hedefe ${remain} ${unit} kaldı`:'Hedef tamamlandı')+` · ${limitText}`;
 }
 function renderKpis(d){
-  setKpi('k_total100',d.totalFor100,100);setKpi('k_post',d.post,90);setKpi('k_sci',d.sci40,40);setKpi('k_tr',d.trAfter,10);setKpi('k_cite',d.citation,5);setKpi('k_meet',d.meetingAfter,5);
-  const kt=document.getElementById('k_thesis'); kt.className='kpi '+status(d.thesisCount,1); kt.querySelector('b').textContent=d.thesisCount;
-  const ka=document.getElementById('k_article'); ka.className='kpi '+status(d.originalArticleCount,1); ka.querySelector('b').textContent=d.originalArticleCount;
-  setKpi('k_teaching',d.teachingAfter,2);
+  setKpi('k_total100',d.totalFor100,100,'Üst sınır yok');
+  setKpi('k_post',d.post,90,'Üst sınır yok');
+  setKpi('k_sci',d.sci40,40,'Üst sınır yok');
+  setKpi('k_tr',d.trAfter,10,'Üst sınır yok');
+  setKpi('k_cite',d.citation,5,'En fazla 10 puan');
+  setKpi('k_meet',d.meetingAfter,5,'En fazla 10 puan');
+  setCountKpi('k_thesis',d.thesisCount,1,'yayın','En fazla 20 puan');
+  setCountKpi('k_article',d.originalArticleCount,1,'makale','Üst sınır yok');
+  setKpi('k_teaching',d.teachingAfter,2,'En fazla 6 puan');
 }
 function renderCategoryKpis(d){
   const root=document.getElementById('categoryKpis');
@@ -748,7 +763,7 @@ function renderList(){
     ['Genel toplam',d.totalOfficial],['100 puan hesabı',d.totalFor100],['Dr sonrası',d.post],['Dr öncesi',d.pre]
   ].map(r=>`<div class="sumrow"><span>${r[0]}</span><b>${fmt(r[1])}</b></div>`).join('');
 }
-function renderAll(){applyPalette();renderTheme();renderItems();const d=compute();renderKpis(d);renderCategoryKpis(d);renderTopAlerts(d);renderList();if(lastAddedId){const id=lastAddedId;setTimeout(()=>{const el=document.getElementById('item_'+id);if(el)el.classList.remove('just-added');if(lastAddedId===id)lastAddedId=null;},1100);}}
+function renderAll(){applyPalette();renderTheme();renderItems();const d=compute();renderKpis(d);renderList();if(lastAddedId){const id=lastAddedId;setTimeout(()=>{const el=document.getElementById('item_'+id);if(el)el.classList.remove('just-added');if(lastAddedId===id)lastAddedId=null;},1100);}}
 function exportJson(){
   save('');
   const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json;charset=utf-8'});
