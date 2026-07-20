@@ -176,17 +176,17 @@ const DEFAULT_ACCENT='#2563eb';
 const TYPES={
   international_article:{name:'Makale - Uluslararası',icon:'📄',cap:null,defaultShare:'equal',items:[
     ['sci_q1','SCIE/SSCI Q1 makale',30,['sci','sci40']],['sci_q2','SCIE/SSCI Q2 makale',20,['sci','sci40']],['sci_q3','SCIE/SSCI Q3 makale',15,['sci','sci40']],['sci_q4','SCIE/SSCI Q4 makale (40 puan şartına dahil değil)',10,['sci']],
-    ['ahci','AHCI kapsamındaki dergide yayımlanmış makale',20,['ahci']],['esci_scopus','ESCI veya Scopus kapsamındaki dergide yayımlanmış makale',10,['esci','scopus']],['other_int_index','Diğer uluslararası indekslerde taranan dergide yayımlanmış makale',5,['otherIndex']],['minor','Editöre mektup / araştırma notu / özet / kitap kritiği',3,['minor']],['case_report','SCIE/SSCI dergide yayımlanmış vak’a takdimi',5,['caseReport']]
+    ['ahci','AHCI kapsamındaki dergide yayımlanmış makale',20,['ahci']],['esci_scopus','ESCI veya Scopus kapsamındaki dergide yayımlanmış makale',10,['esci','scopus']],['other_int_index','Diğer uluslararası indekslerde taranan dergide yayımlanmış makale',5,['otherIndex']],['minor','Editöre mektup / araştırma notu / özet / kitap kritiği',3,['minor']]
   ]},
   national_article:{name:'Makale - Ulusal',icon:'📰',cap:null,defaultShare:'equal',items:[
     ['trdizin','TR Dizin kapsamındaki dergide yayımlanmış makale',10,['trdizin']],['other_nat','Diğer hakemli dergide yayımlanmış makale',4,['national']],['nat_minor','Diğer hakemli dergide editöre mektup / araştırma notu / özet / kitap kritiği',2,['minor']]
   ]},
   thesis_publication:{name:'Lisansüstü Tezlerden Üretilmiş Yayın',icon:'🎓',cap:20,defaultShare:'equal',items:[
     ['thesis_sci','SCIE/SSCI/AHCI kapsamındaki dergide yayımlanmış makale',20,['thesis','sci']],['thesis_esci','ESCI veya Scopus kapsamındaki dergide yayımlanmış makale',10,['thesis','esci']],['thesis_int','Diğer uluslararası indekslerde taranan dergide yayımlanmış makale',5,['thesis']],
-    ['thesis_tr','TR Dizin makale',8,['thesis','trdizin']],['thesis_book','BKCI kitap',20,['thesis','book']],['thesis_chapter','BKCI kitap bölümü',10,['thesis','chapter']],['thesis_other_book','Diğer uluslararası/ulusal kitap',5,['thesis','book']],['thesis_other_chapter','Diğer uluslararası/ulusal kitapta bölüm',3,['thesis','chapter']],['thesis_meeting','Uluslararası bilimsel toplantı — CPCI tam metin/özet',3,['thesis','meeting']],['thesis_meeting_other','Diğer uluslararası/ulusal bilimsel toplantıda yayımlanmış çalışma',2,['thesis','meeting']]
+    ['thesis_tr','TR Dizin makale',8,['thesis','trdizin']],['thesis_book','BKCI kitap',20,['thesis','book']],['thesis_chapter','BKCI kitap bölümü',10,['thesis','chapter']],['thesis_other_book','Diğer uluslararası/ulusal kitap',5,['thesis','book']],['thesis_other_chapter','Diğer uluslararası/ulusal kitapta bölüm',3,['thesis','chapter']],['thesis_meeting','Uluslararası bilimsel toplantı — CPCI tam metin/özet bildiri',5,['thesis','meeting']],['thesis_meeting_other','Diğer uluslararası/ulusal bilimsel toplantıda yayımlanmış çalışma',2,['thesis','meeting']]
   ]},
   meeting:{name:'Bilimsel Toplantı / Bildiri',icon:'🎤',cap:10,defaultShare:'equal',items:[
-    ['meeting_full_int','Uluslararası bilimsel toplantı — CPCI tam metin/özet',5,['meeting']],['meeting_abs_int','Diğer uluslararası/ulusal bilimsel toplantıda yayımlanmış çalışma',3,['meeting']],['meeting_other','Diğer uluslararası/ulusal bilimsel toplantıda yayımlanmış çalışma',3,['meeting']]
+    ['meeting_full_int','Uluslararası bilimsel toplantı — CPCI tam metin/özet',5,['meeting']],['meeting_abs_int','Diğer uluslararası bilimsel toplantıda sunulan ve yayımlanan bildiri',3,['meeting']],['meeting_other','Ulusal bilimsel toplantıda sunulan ve yayımlanan bildiri',3,['meeting']]
   ]},
   citation:{name:'Atıf',icon:'❝',cap:10,defaultShare:'full',items:[
     ['cite_sci','SCIE/SSCI/AHCI/ESCI/Scopus kapsamındaki yayında atıf',3,['citation']],['cite_book','BKCI kapsamındaki kitapta atıf',2,['citation']],['cite_tr','TR Dizin kapsamındaki dergide atıf',2,['citation','trdizin']],['cite_other','Diğer uluslararası/ulusal kitap veya dergide atıf',1,['citation']]
@@ -249,10 +249,12 @@ function normalizeState(){
     };
     if(item.type==='project' && item.subtype==='tubitak_researcher') item.subtype='international_completed';
     if(item.type==='award' && item.subtype==='award_university') item.subtype='';
+    if(item.type==='international_article' && item.subtype==='case_report') item.subtype='';
+    if(isArticleType(item.type) && item.main==='first') item.main='none';
     item.share=validShare(item,item.share)?item.share:defaultShareFor(item);
     item.main=validMainAuthor(item,item.main)?item.main:defaultMainAuthor(item);
     if(item.main==='sole') item.people=1;
-    if((item.main==='first' || item.main==='grad') && item.people<2) item.people=2;
+    if(item.main==='grad' && item.people<2) item.people=2;
     if(item.main==='other_main' && item.people<2) item.people=2;
     return item;
   });
@@ -294,7 +296,7 @@ function factor(item){
   const p=Math.max(1,Number(item.people)||1);
   if(isArticleType(item.type)){
     if(item.main==='sole') return 1;
-    if(item.main==='first' || item.main==='grad') return p===2?0.8:0.5;
+    if(item.main==='grad') return p===2?0.8:0.5;
     if(item.main==='other_main') return p===2?0.5:0.5/(p-1);
   }
   if(item.type==='thesis_advisory' && item.share==='half') return 0.5;
@@ -304,21 +306,20 @@ function factor(item){
 function mainAuthorLabel(item){
   if(!isArticleType(item.type)) return '';
   if(item.main==='sole') return 'Başlıca yazar: tek yazarlı yayın / tam puan';
-  if(item.main==='first') return `Başlıca yazar: ilk yazar / ${item.people===2?'0,80':'0,50'} katsayı`;
   if(item.main==='grad') return `Başlıca yazar: lisansüstü öğrencisi ile / ${item.people===2?'0,80':'0,50'} katsayı`;
   if(item.main==='other_main') return 'Başlıca yazar değil; başka bir başlıca yazar var';
   return 'Başlıca yazar belirtilmedi / eşit paylaşım';
 }
 function mainAuthorOptions(item){
   if(!isArticleType(item.type)) return [];
-  return [['none','Başlıca yazar belirtilmedi / eşit paylaşım'],['sole','Tek yazarlı makale / tam puan'],['first','İlk sıradaki yazar — başlıca yazar'],['grad','Danışmanlığındaki lisansüstü öğrenci(ler) ile — başlıca yazar'],['other_main','Başlıca yazar değil — başka başlıca yazar var']];
+  return [['none','Başlıca yazar belirtilmedi / eşit paylaşım'],['sole','Tek yazarlı makale / tam puan'],['grad','Danışmanlığındaki lisansüstü öğrenci(ler) ile — başlıca yazar'],['other_main','Başlıca yazar değil — başka başlıca yazar var']];
 }
 function validMainAuthor(item,value){
   if(!isArticleType(item.type)) return value==='none' || !value;
   return mainAuthorOptions(item).some(x=>x[0]===value);
 }
 function defaultMainAuthor(item){return 'none';}
-function isMainAuthor(item){return isArticleType(item.type) && ['sole','first','grad'].includes(item.main);}
+function isMainAuthor(item){return isArticleType(item.type) && ['sole','grad'].includes(item.main);}
 
 function score(item){return base(item)*(Number(item.qty)||1)*factor(item)}
 function bookSubcapScale(item){
@@ -438,7 +439,7 @@ function allowedShareOptions(item){
 function validShare(item,share){return allowedShareOptions(item).some(x=>x[0]===share)}
 function defaultShareFor(item){return allowedShareOptions(item)[0]?.[0]||'full'}
 function ruleHint(item){
-  if(isArticleType(item.type)) return 'Başlıca yazar; tek yazarlı makalenin yazarı, ilk sıradaki yazar veya danışmanlığındaki lisansüstü öğrenci(ler) ile makale yazan adaydır. İki yazarlı makalede başlıca yazar %80, ikinci yazar %50; üç veya daha fazla yazarda başlıca yazar %50, kalan yarı diğer yazarlar arasında eşit paylaşılır. Başlıca yazar belirtilmezse puan eşit bölünür.';
+  if(isArticleType(item.type)) return 'Mühendislik temel alanında başlıca yazar; tek yazarlı makalenin yazarı veya danışmanlığını yaptığı lisansüstü öğrenci(ler) ile makale yazan adaydır (ilk sırada yer almak tek başına başlıca yazarlık sağlamaz). İki yazarlı makalede başlıca yazar tam puanın 0,8’ini, ikinci yazar 0,5’ini alır; üç ve daha fazla yazarlı makalede başlıca yazar puanın yarısını alır, diğer yazarlar kalan yarıyı eşit paylaşır. Başlıca yazar belirtilmezse puan yazarlar arasında eşit bölünür.';
   if(item.type==='thesis_publication') return 'Lisansüstü tezlerden üretilen yayınlar yalnızca bu başlıkta puanlanır ve doktora/uzmanlık sonrası 90 puan hesabına dahil edilmez.';
   if(item.type==='meeting') return 'Bildiri puanı yazar sayısına eşit bölünür. Aynı bilimsel toplantıda sunulan en fazla bir çalışma puanlanabilir.';
   if(item.type==='citation') return 'Dönem seçimi, atıf alan eserin yayımlandığı dönemi ifade eder. Yazarın kendi eserlerine yaptığı atıflar değerlendirilmez; bir esere aynı yayında yapılan birden fazla atıf tek atıf sayılır.';
@@ -522,7 +523,7 @@ function updateItem(id,key,value){
   if(key==='people') {
     it.people=Math.max(1,Number(value)||1);
     if(it.main==='sole' && it.people!==1) it.main='none';
-    if((it.main==='first' || it.main==='grad') && it.people<2) it.people=2;
+    if(it.main==='grad' && it.people<2) it.people=2;
     if(it.main==='other_main' && it.people<2) it.people=2;
   }
   if(key==='qty') it.qty=Math.max(1,Number(value)||1);
@@ -530,7 +531,7 @@ function updateItem(id,key,value){
   if(key==='main') {
     it.main=validMainAuthor(it,value)?value:defaultMainAuthor(it);
     if(it.main==='sole') it.people=1;
-    if((it.main==='first' || it.main==='grad') && it.people<2) it.people=2;
+    if(it.main==='grad' && it.people<2) it.people=2;
     if(it.main==='other_main' && it.people<2) it.people=2;
   }
   if(!validMainAuthor(it,it.main)) it.main=defaultMainAuthor(it);
@@ -693,15 +694,6 @@ function setPointsWithCountTargetKpi(id,points,count,target,unit,limitText,rawPo
     const rawLine=Math.abs(rawPoints-points)>0.004?`Ham puan: ${fmt(rawPoints)} · Hesaba geçen: ${fmt(points)} puan`:`Hesaba geçen puan: ${fmt(points)}`;
     em.innerHTML=`<i class="earned">${rawLine}</i><i class="maximum">Üst sınır: ${limitText}</i><i class="remaining">${remain>0?`Mevcut ${Math.round(count)} ${unit} · ${remain} ${unit} daha gerekli`:`Adet şartı tamamlandı · Mevcut ${Math.round(count)} ${unit}`}</i>`;
   }
-}
-function setNationalArticleKpi(d){
-  const el=document.getElementById('k_tr'); if(!el) return;
-  const met=d.nationalPublicationCount>=3 && d.nationalTrCount>=2 && d.nationalMainCount>=2;
-  const progress=Math.min(d.nationalPublicationCount/3,d.nationalTrCount/2,d.nationalMainCount/2);
-  el.className='kpi '+(met?'ok':progress>=.65?'warn':'bad');
-  el.querySelector('b').textContent=`${fmt(d.nationalArticleScore)} puan`;
-  const em=el.querySelector('em');
-  if(em) em.textContent=met?'Adet ve başlıca yazarlık şartları tamamlandı · Üst sınır yok':`${d.nationalPublicationCount}/3 yayın · ${d.nationalTrCount}/2 TR Dizin · ${d.nationalMainCount}/2 başlıca yazarlı`;
 }
 function renderKpis(d){
   setKpi('k_total100',d.totalFor100,100,'Yok');
