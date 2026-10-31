@@ -19,6 +19,7 @@ aside{background:#fff}.heading h1{color:var(--page-ink,#172236)}.heading p,.head
 .layout>aside{min-width:0}.sidebar-content{position:sticky;top:24px;display:flex;flex-direction:column;gap:22px;min-width:0}.sidebar-content nav{position:static;top:auto;display:grid;grid-template-columns:minmax(0,1fr);gap:8px;min-width:0}.sidebar-content nav button{position:static;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;height:auto;min-height:46px;padding:12px 14px;line-height:1.5;white-space:normal;min-width:0}.sidebar-content nav button span{float:none;font-size:inherit;line-height:1.5;margin:0}.sidebar-content .nav-label{display:block;min-width:0;flex:1 1 auto;overflow-wrap:break-word;text-align:left}.sidebar-content #workCount{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-width:24px;padding:1px 6px;border-radius:6px;background:#edf1f6;color:#435369;font-size:11px;font-weight:600;line-height:1.5}.sidebar-content .aside-note{position:static;margin:0;padding:0 14px;line-height:1.6;white-space:normal;overflow-wrap:break-word}.sidebar-content .aside-note span{display:block;line-height:1.6;margin-top:5px}
 @media(max-width:720px){.sidebar-content{position:static;gap:0}.sidebar-content nav{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:5px}.sidebar-content nav button{flex-direction:column;justify-content:center;gap:4px;padding:9px 6px;min-height:54px;line-height:1.5;font-size:12px}.sidebar-content .nav-label{text-align:center;flex:0 1 auto}.sidebar-content #workCount{font-size:10px;min-width:20px;padding:0 5px}.sidebar-content .aside-note{display:none}}
 @media print{.sidebar-content{position:static}}
+.work-card{scroll-margin-top:20px}
 </style></head><body>
 <header class="top"><a class="brand" href="#" onclick="showPage('overview');return false"><span class="logo">D</span><span>Doçentlik Dosyam<small>Makine Mühendisliği</small></span></a><span id="saveStatus" class="save-status" role="status"></span><button class="btn" onclick="exportJson()">Yedeği indir</button></header>
 <div class="layout"><aside><div class="sidebar-content"><nav aria-label="Ana menü"><button id="nav_overview" class="selected" onclick="showPage('overview')"><span class="nav-label">Genel bakış</span></button><button id="nav_works" onclick="showPage('works')"><span class="nav-label">Çalışmalarım</span><span id="workCount" aria-label="Kayıt sayısı">0</span></button><button id="nav_details" onclick="showPage('details')"><span class="nav-label">Bilgiler ve kaynak</span></button></nav><div class="aside-note">ÜAK · Tablo 9<br><span>Veriler yalnız bu tarayıcıda.</span></div></div></aside>
@@ -343,7 +344,18 @@ function updateMode(mode){state.candidateMode=mode==='special'?'special':'standa
 function flash(msg){const old=document.querySelector('.toast');if(old)old.remove();const el=document.createElement('div');el.className='toast';el.setAttribute('role','status');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),3800);}
 function renderAll(){const d=compute();applyPalette();renderDashboard(d);renderItems();renderList(d);}
 function scrollToSummary(){document.getElementById('ozet').scrollIntoView({behavior:'smooth',block:'start'});}
-function focusItem(id){requestAnimationFrame(()=>document.getElementById('item_'+id)?.scrollIntoView({behavior:'smooth',block:'center'}));}
+let itemFocusRequest=0;
+function focusItem(id){
+ const request=++itemFocusRequest;
+ // Follow the card only after its new category has been rendered and laid out.
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  if(request!==itemFocusRequest||currentPage!=='works')return;
+  const card=document.getElementById('item_'+id);
+  if(!card||!card.getClientRects().length)return;
+  const behavior=window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth';
+  card.scrollIntoView({behavior,block:'start',inline:'nearest'});
+ }));
+}
 function toggleItem(id){const it=state.items.find(x=>x.id===id);if(!it)return;it.expanded=!it.expanded;save();renderAll();}
 function editItem(id){const it=state.items.find(x=>x.id===id);if(!it)return;it.expanded=true;save();renderAll();focusItem(id);}
 function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
@@ -495,7 +507,11 @@ updateItem=function(id,key,value){
   else if(previousMain==='sole')it.main='none';
   ledgerCache=null;save();renderAll();return;
  }
+ const changesCategory=it&&key==='type'&&it.type!==value&&(!value||!!def(value));
+ // A category search must not hide the card while it moves to its new group.
+ if(changesCategory)document.getElementById('searchWorks').value='';
  originalUpdateItem(id,key,value);
+ if(changesCategory&&it.type===value)focusItem(id);
 };
 // The detailed report also places each subtotal AFTER its rows.
 renderList=function(d=compute()){
