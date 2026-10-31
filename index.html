@@ -20,6 +20,20 @@ aside{background:#fff}.heading h1{color:var(--page-ink,#172236)}.heading p,.head
 @media(max-width:720px){.sidebar-content{position:static;gap:0}.sidebar-content nav{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:5px}.sidebar-content nav button{flex-direction:column;justify-content:center;gap:4px;padding:9px 6px;min-height:54px;line-height:1.5;font-size:12px}.sidebar-content .nav-label{text-align:center;flex:0 1 auto}.sidebar-content #workCount{font-size:10px;min-width:20px;padding:0 5px}.sidebar-content .aside-note{display:none}}
 @media print{.sidebar-content{position:static}}
 .work-card{scroll-margin-top:20px}
+/* Period groups stay inside each existing work category. */
+.period-group{--period-ink:#536176;--period-soft:#f3f5f8;--period-line:#d5dce5;min-width:0;border:1px solid var(--period-line);border-radius:10px;background:var(--period-soft);overflow:hidden}
+.period-after{--period-ink:#176448;--period-soft:#edf8f1;--period-line:#acd6bd}
+.period-before{--period-ink:#8a510b;--period-soft:#fff5e5;--period-line:#e8c58e}
+.period-thesis{--period-ink:#664696;--period-soft:#f5f0fc;--period-line:#d3c0eb}
+.period-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 15px;border-bottom:1px solid var(--period-line);color:var(--period-ink)}
+.period-heading h3{display:flex;align-items:center;gap:9px;margin:0;font-size:13px;font-weight:700;color:inherit}
+.period-heading h3::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--period-ink);flex-shrink:0}
+.period-count{flex-shrink:0;border:1px solid var(--period-line);border-radius:20px;background:#fff;padding:2px 9px;font-size:11px;font-weight:600;color:var(--period-ink)}
+.period-cards{display:grid;gap:12px;padding:12px;min-width:0}
+.period-group .work-card{border-left:4px solid var(--period-ink)}
+.bottom-totals .after-total strong{color:#176448}.bottom-totals .before-total strong{color:#8a510b}
+@media(max-width:720px){.period-heading{padding:11px 10px;gap:8px}.period-heading h3{font-size:12px;gap:7px}.period-cards{padding:8px;gap:10px}.period-count{font-size:10px;padding:2px 7px}}
+@media print{.period-heading{break-after:avoid}.period-group{border-color:#b5becb}.period-heading,.period-count{color:#172236}}
 </style></head><body>
 <header class="top"><a class="brand" href="#" onclick="showPage('overview');return false"><span class="logo">D</span><span>Doçentlik Dosyam<small>Makine Mühendisliği</small></span></a><span id="saveStatus" class="save-status" role="status"></span><button class="btn" onclick="exportJson()">Yedeği indir</button></header>
 <div class="layout"><aside><div class="sidebar-content"><nav aria-label="Ana menü"><button id="nav_overview" class="selected" onclick="showPage('overview')"><span class="nav-label">Genel bakış</span></button><button id="nav_works" onclick="showPage('works')"><span class="nav-label">Çalışmalarım</span><span id="workCount" aria-label="Kayıt sayısı">0</span></button><button id="nav_details" onclick="showPage('details')"><span class="nav-label">Bilgiler ve kaynak</span></button></nav><div class="aside-note">ÜAK · Tablo 9<br><span>Veriler yalnız bu tarayıcıda.</span></div></div></aside>
@@ -478,6 +492,20 @@ function renderItem(it,index){const d=def(it.type),st=subtype(it.type,it.subtype
 }
 const categoryPresentation={
  international_article:['01','Uluslararası makaleler','blue'],national_article:['02','Ulusal makaleler','indigo'],thesis_publication:['03','Tezden üretilmiş yayınlar','amber'],book:['04','Kitap ve kitap bölümleri','teal'],citation:['05','Atıflar','blue'],thesis_advisory:['06','Tez danışmanlığı','indigo'],project:['07','Araştırma projeleri','teal'],meeting:['08','Bilimsel toplantılar','blue'],teaching:['09','Eğitim ve öğretim','indigo'],patent:['10','Patent ve faydalı model','amber'],award:['11','Ödüller','amber'],editorial:['12','Editörlük','teal'],other:['13','Diğer faaliyetler','indigo']};
+const workPeriodLabels={after:'Doktora sonrası',before:'Doktora öncesi',unknown:'Dönemi doğrulanmamış',thesis:'Tez yayını · 90 puana dahil değil'};
+function workPeriodGroup(it){
+ if(isThesisProduced(it))return 'thesis';
+ const period=periodOf(it);
+ return period==='after'||period==='before'?period:'unknown';
+}
+function renderPeriodGroups(entries){
+ return Object.entries(workPeriodLabels).map(([period,label])=>{
+  const group=entries.filter(({it})=>workPeriodGroup(it)===period);
+  if(!group.length)return '';
+  return `<section class="period-group period-${period}" data-period="${period}" aria-label="${esc(label)}"><header class="period-heading"><h3>${esc(label)}</h3><span class="period-count">${group.length} kayıt</span></header><div class="period-cards">${group.map(({it,index})=>renderItem(it,index)).join('')}</div></section>`;
+ }).join('');
+}
+
 function renderItems(){
  const q=document.getElementById('searchWorks').value.toLocaleLowerCase('tr');
  const list=state.items.map((it,index)=>({it,index})).filter(({it})=>`${it.note} ${def(it.type)?.name||''} ${categoryPresentation[it.type]?.[1]||''}`.toLocaleLowerCase('tr').includes(q));
@@ -485,11 +513,11 @@ function renderItems(){
  const html=groups.map(type=>{
   const entries=list.filter(({it})=>it.type===type);if(!entries.length)return '';
   const [number,title,tone]=categoryPresentation[type]||['＋','Tür seçimi bekleyen çalışmalar','slate'];
-  return `<section class="category-section tone-${tone}" aria-label="${esc(title)}"><header class="category-heading"><span class="category-number">${number}</span><div><h2>${esc(title)}</h2><p>${entries.length} kayıt${type==='thesis_publication'?' · Genel toplama dahil, 90 puana hariç':''}</p></div></header><div class="category-rows">${entries.map(({it,index})=>renderItem(it,index)).join('')}</div><div class="category-subtotal"><span>${q?'Gösterilen kayıtların':'Kategori'} katkısı</span><strong>${fmt(entries.reduce((sum,{it})=>sum+effectiveScore(it),0))} <small>puan</small></strong></div></section>`;
+  return `<section class="category-section tone-${tone}" aria-label="${esc(title)}"><header class="category-heading"><span class="category-number">${number}</span><div><h2>${esc(title)}</h2><p>${entries.length} kayıt${type==='thesis_publication'?' · Genel toplama dahil, 90 puana hariç':''}</p></div></header><div class="category-rows">${renderPeriodGroups(entries)}</div><div class="category-subtotal"><span>${q?'Gösterilen kayıtların':'Kategori'} katkısı</span><strong>${fmt(entries.reduce((sum,{it})=>sum+effectiveScore(it),0))} <small>puan</small></strong></div></section>`;
  }).join('');
  document.getElementById('items').innerHTML=state.items.length?(html||'<div class="empty"><h2>Eşleşen çalışma yok</h2><p>Başka bir başlık veya tür arayın.</p></div>'):'<div class="empty"><h2>Henüz çalışma eklenmedi</h2><p>İlk kaydınızı oluşturun veya eski JSON yedeğinizi yükleyin.</p><div class="button-row" style="justify-content:center"><button class="btn primary" onclick="addItem()">＋ Çalışma ekle</button><button class="btn" onclick="document.getElementById(\'importFile\').click()">Yedek yükle</button></div></div>';
  const d=compute();
- document.getElementById('workTotals').innerHTML=`<div class="totals-heading"><div><span class="eyebrow">DOSYA TOPLAMI</span><h2>Tüm kayıtların hesabı</h2></div><span class="muted">${state.items.length} kayıt · yazar payı ve tavanlar sonrası</span></div><div class="bottom-totals"><div><span>Genel toplam</span><strong>${fmt(d.totalOfficial)} <small>/ 100</small></strong></div><div><span>Doktora sonrası</span><strong>${fmt(d.post)} <small>/ 90</small></strong></div><div><span>Doktora öncesi</span><strong>${fmt(d.pre)}</strong></div><div class="thesis-total"><span>Tez yayınları</span><strong>${fmt(d.thesis)}</strong><small>90 puana dahil değil</small></div></div>`;
+ document.getElementById('workTotals').innerHTML=`<div class="totals-heading"><div><span class="eyebrow">DOSYA TOPLAMI</span><h2>Tüm kayıtların hesabı</h2></div><span class="muted">${state.items.length} kayıt · yazar payı ve tavanlar sonrası</span></div><div class="bottom-totals"><div><span>Genel toplam</span><strong>${fmt(d.totalOfficial)} <small>/ 100</small></strong></div><div class="after-total"><span>Doktora sonrası</span><strong>${fmt(d.post)} <small>/ 90</small></strong></div><div class="before-total"><span>Doktora öncesi</span><strong>${fmt(d.pre)}</strong></div><div class="thesis-total"><span>Tez yayınları</span><strong>${fmt(d.thesis)}</strong><small>90 puana dahil değil</small></div></div>`;
 }
 
 const oldAdd=addItem;addItem=function(){document.getElementById('searchWorks').value='';showPage('works');oldAdd();};
@@ -507,11 +535,12 @@ updateItem=function(id,key,value){
   else if(previousMain==='sole')it.main='none';
   ledgerCache=null;save();renderAll();return;
  }
+ const previousPeriod=it?workPeriodGroup(it):null;
  const changesCategory=it&&key==='type'&&it.type!==value&&(!value||!!def(value));
  // A category search must not hide the card while it moves to its new group.
  if(changesCategory)document.getElementById('searchWorks').value='';
  originalUpdateItem(id,key,value);
- if(changesCategory&&it.type===value)focusItem(id);
+ if(it&&((changesCategory&&it.type===value)||previousPeriod!==workPeriodGroup(it)))focusItem(id);
 };
 // The detailed report also places each subtotal AFTER its rows.
 renderList=function(d=compute()){
